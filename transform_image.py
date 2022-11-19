@@ -5,11 +5,15 @@ import cv2
 from image_check import num_channels_check
 
 
+def invert_black_white(image):
+    return cv2.bitwise_not(image)
+
+
 def create_grey(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
-def gray_to_bl(image, thresh=2):
+def grey_to_bl(image, thresh=2):
     channels = num_channels_check(image)
     if channels > 2:
         raise Exception("Image is not grey")
@@ -18,7 +22,7 @@ def gray_to_bl(image, thresh=2):
     return bl_image
 
 
-def crop_image(image, xStart, xEnd, yStart, yEnd):
+def old_crop_image(image, xStart, xEnd, yStart, yEnd):
     return image[yStart:yEnd, xStart:xEnd]
 
 
