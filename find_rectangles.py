@@ -26,7 +26,7 @@ def get_rectangle_size(rectangle):
 
 
 def get_rectangles(
-    image, min_size=200, rect_min_width=15, rect_min_height=25, rect_min_size=200000
+    image, min_size=200, rect_min_width=15, rect_min_height=25, rect_min_size=100000
 ):
     """_summary_
 
@@ -39,7 +39,7 @@ def get_rectangles(
     contours = get_contours(image)
     rectangles = []
     for c in contours:
-        area = cv2.arcLength(c, closed=True)
+        area = cv2.contourArea(c)
         if area > min_size and area < 1000000:
             new_rect = cv2.boundingRect(c)
             if (
@@ -61,13 +61,15 @@ def find_biggest_rectangle(rectangles):
     Returns:
         tuple: xStart, yStart, width, height
     """
+    if not len(rectangles):
+        raise "No rectangles provided"
 
     biggest_rectangle_index = 0
     for index, rect in enumerate(rectangles):
         if index == 0:
             continue
 
-        current_biggest = rect[biggest_rectangle_index]
+        current_biggest = rectangles[biggest_rectangle_index]
 
         if get_rectangle_size(rect) > get_rectangle_size(current_biggest):
             biggest_rectangle_index = index

@@ -1,3 +1,5 @@
+import math
+
 import cv2
 
 from image_check import num_channels_check
@@ -17,4 +19,22 @@ def gray_to_bl(image, thresh=2):
 
 
 def crop_image(image, xStart, xEnd, yStart, yEnd):
+    return image[yStart:yEnd, xStart:xEnd]
+
+
+def crop_image(image, rect):
+    """_summary_
+
+    Args:
+        image (_type_): _description_
+        rect (List): (xStart, yStart, width, height)
+
+    Returns:
+        _type_: _description_
+    """
+    scale_img_size = 0
+    xStart = int(rect[0] * (1 - scale_img_size))
+    xEnd = math.ceil((rect[0] + rect[2]) * (1 + scale_img_size))
+    yStart = int(rect[1] * (1 - scale_img_size))
+    yEnd = math.ceil((rect[1] + rect[3]) * (1 + scale_img_size))
     return image[yStart:yEnd, xStart:xEnd]
