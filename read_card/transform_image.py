@@ -2,7 +2,7 @@ import math
 
 import cv2
 
-from image_check import num_channels_check
+from read_card.image_check import num_channels_check
 
 
 def invert_black_white(image):

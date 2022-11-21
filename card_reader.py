@@ -1,18 +1,33 @@
+import logging
+
 import cv2
 import numpy as np
 
-from card_size import (
+from card_settings import (
     text_h_percentage,
     text_s_h_percentage,
     text_s_w_percentage,
     text_w_percentage,
 )
-from draw_rectangles import draw_contours, draw_multiple_rectangles, draw_rectangle
-from extract_card import apply_mask, edge_mask, generate_mask
-from find_rectangles import find_biggest_rectangle, get_contours, get_rectangles
-from get_image import read_saved_image
-from read_text import find_text_in_image
-from transform_image import create_grey, crop_image, grey_to_bl, invert_black_white
+from read_card.draw_rectangles import (
+    draw_contours,
+    draw_multiple_rectangles,
+    draw_rectangle,
+)
+from read_card.extract_card import apply_mask, edge_mask, generate_mask
+from read_card.find_rectangles import (
+    find_biggest_rectangle,
+    get_contours,
+    get_rectangles,
+)
+from read_card.get_image import read_saved_image
+from read_card.read_text import find_text_in_image
+from read_card.transform_image import (
+    create_grey,
+    crop_image,
+    grey_to_bl,
+    invert_black_white,
+)
 
 
 class CardReader:
@@ -84,7 +99,7 @@ class CardReader:
 def run_card_read(card_number):
     card_reader = CardReader(f"card_{card_number}")
     card_reader()
-    print(card_reader.text)
+    logging.warning(card_reader.text.replace(" ", "").strip())
     card_reader.output_card(f"test_image_{card_number}")
 
 

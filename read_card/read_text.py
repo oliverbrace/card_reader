@@ -7,9 +7,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 
 
 def find_text_in_image(image, psm=7):
-    custom_config = (
-        f"-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ- --psm {psm}"
-    )
+    custom_config = f"-c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ --psm {psm}"
     # Increase image size which improves detection of individual letters
     image = cv2.resize(image, None, fx=2, fy=2)
     try:
