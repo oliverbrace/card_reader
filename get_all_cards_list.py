@@ -17,9 +17,12 @@ with open("all_cards.csv", "w", newline="") as f:
 
         # write a row to the csv file
         try:
-            writer.writerow([re.sub("[^0-9A-Z]+", "", card_info["name"].upper())])
-        except:
+            writer.writerow(
+                [
+                    re.sub("[^0-9A-Z-]+", "", card_info["name"].upper()),
+                    card_info["name"].encode("utf-8"),
+                ]
+            )
+        except Exception as e:
             logging.warning([card_info["name"]])
-
-# RAIMEI and RAI-MEI both exist which causes an issue since I strip all special characters
-# Will need an if statements for these cards
+            logging.warning(e)

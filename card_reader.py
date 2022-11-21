@@ -1,4 +1,5 @@
 import logging
+import re
 
 import cv2
 import numpy as np
@@ -99,13 +100,19 @@ class CardReader:
 def run_card_read(card_number):
     card_reader = CardReader(f"card_{card_number}")
     card_reader()
-    logging.warning(card_reader.text.replace(" ", "").strip())
+    logging.warning(re.sub("[^0-9A-Z]+", "", card_reader.text.upper()))
     card_reader.output_card(f"test_image_{card_number}")
+
+
+def read_card(card_number):
+    card_reader = CardReader(f"card_{card_number}")
+    card_reader()
+    return re.sub("[^0-9A-Z-]+", "", card_reader.text.upper())
 
 
 def all():
     for card_number in range(1, 9):
-        run_card_read(card_number)
+        logging.warning(read_card(card_number))
 
 
 # run_card_read(1)
