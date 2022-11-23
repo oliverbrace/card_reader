@@ -1,3 +1,4 @@
+import csv
 import logging
 import re
 
@@ -88,6 +89,11 @@ class CardReader:
         cont = get_contours(self.card_image)
         self.card_image = draw_contours(self.original_image, cont)
 
+    def save_title_to_file(self):
+        with open("unmatched_titles.csv", "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([re.sub("[^0-9A-Z-]+", "", self.text).upper()])
+
     def __call__(self):
         self.load_image()
         self.extract_card()
@@ -95,6 +101,7 @@ class CardReader:
         self.card_image = crop_image(self.card_image, text_rectangle)
         self.card_image = create_grey(self.card_image)
         self.text = find_text_in_image(self.card_image)
+        # self.save_title_to_file()
 
 
 def run_card_read(card_number):
@@ -107,7 +114,6 @@ def run_card_read(card_number):
 def read_card(card_number):
     card_reader = CardReader(f"card_{card_number}")
     card_reader()
-    return re.sub("[^0-9A-Z-]+", "", card_reader.text.upper())
 
 
 def all():

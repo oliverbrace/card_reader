@@ -11,9 +11,9 @@ card_infos = json.loads(x.text)["data"]
 
 # open the file in the write mode
 with open("all_cards.csv", "w", newline="") as f:
+    # create the csv writer
     writer = csv.writer(f)
     for index, card_info in enumerate(card_infos):
-        # create the csv writer
 
         # write a row to the csv file
         try:
