@@ -6,9 +6,6 @@ from read_card.transform_image import create_grey
 
 def get_contours(image):
     grey_image = create_grey(image)
-    channels = num_channels_check(grey_image)
-    if channels > 2:
-        raise Exception("Image is not grey")
 
     contours, hierarchy = cv2.findContours(
         image=grey_image, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE
@@ -26,7 +23,15 @@ def get_rectangle_size(rectangle):
 
 
 def get_rectangles(
-    image, min_size=200, rect_min_width=15, rect_min_height=25, rect_min_size=100000
+    image,
+    min_size=200,
+    max_size=1000000,
+    rect_min_width=15,
+    rect_min_height=25,
+    rect_min_size=100000,
+    rect_max_width=100000,
+    rect_max_height=100000,
+    rect_max_size=100000000000000,
 ):
     """_summary_
 
@@ -40,12 +45,15 @@ def get_rectangles(
     rectangles = []
     for c in contours:
         area = cv2.contourArea(c)
-        if area > min_size and area < 1000000:
+        if area > min_size and area < max_size:
             new_rect = cv2.boundingRect(c)
             if (
                 new_rect[3] > rect_min_height
                 and new_rect[2] > rect_min_width
                 and get_rectangle_size(new_rect) > rect_min_size
+                and new_rect[3] < rect_max_height
+                and new_rect[2] < rect_max_width
+                and get_rectangle_size(new_rect) < rect_max_size
             ):
                 rectangles.append(new_rect)
 

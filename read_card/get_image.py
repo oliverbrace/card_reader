@@ -6,6 +6,6 @@ import cv2
 
 def read_saved_image(filename, colour=True, path="cards/"):
     return cv2.imread(
-        path + filename + ".jpeg",
+        path + filename,
         cv2.IMREAD_UNCHANGED if colour else cv2.IMREAD_GRAYSCALE,
     )

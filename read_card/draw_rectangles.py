@@ -1,10 +1,17 @@
 import cv2
 
+from read_card.find_rectangles import get_contours
+
 
 def draw_contours(image, contours):
     return cv2.drawContours(
         image=image, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2
     )
+
+
+def get_draw_contours(contour_image, draw_image):
+    contours = get_contours(contour_image)
+    return draw_contours(draw_image, contours)
 
 
 def draw_rectangle(image, rectangle, colour=(0, 255, 0), thickness=-1):

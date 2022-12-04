@@ -10,6 +10,10 @@ def invert_black_white(image):
 
 
 def create_grey(image):
+    channels = num_channels_check(image)
+    if channels < 2:
+        raise Exception("Image is already grey")
+
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
