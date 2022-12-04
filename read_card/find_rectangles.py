@@ -28,10 +28,8 @@ def get_rectangles(
     max_size=1000000,
     rect_min_width=15,
     rect_min_height=25,
-    rect_min_size=100000,
     rect_max_width=100000,
     rect_max_height=100000,
-    rect_max_size=100000000000000,
 ):
     """_summary_
 
@@ -50,10 +48,8 @@ def get_rectangles(
             if (
                 new_rect[3] > rect_min_height
                 and new_rect[2] > rect_min_width
-                and get_rectangle_size(new_rect) > rect_min_size
                 and new_rect[3] < rect_max_height
                 and new_rect[2] < rect_max_width
-                and get_rectangle_size(new_rect) < rect_max_size
             ):
                 rectangles.append(new_rect)
 
