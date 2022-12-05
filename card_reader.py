@@ -5,6 +5,7 @@ import re
 import cv2
 import numpy as np
 
+from card_settings import card_height_width
 from read_card.draw_rectangles import draw_rectangle, get_draw_contours
 from read_card.extract_card import apply_mask, edge_mask, simple_edge_mask
 from read_card.find_rectangles import (
@@ -13,7 +14,7 @@ from read_card.find_rectangles import (
     get_rectangles,
 )
 from read_card.get_image import find_text_rect, read_saved_image
-from read_card.image_check import get_image_size
+from read_card.image_check import get_image_size, rectangle_shape_check
 from read_card.read_text import find_text_in_image
 from read_card.transform_image import create_grey, crop_image, invert_black_white
 
@@ -58,6 +59,15 @@ class CardReader:
             rect_max_height=self.image_height * 0.9,
             rect_max_width=self.image_width * 0.9,
         )
+        if len(rectangles) == 0:
+            logging.warning("No rectangles found")
+            return None
+
+        # Check size of card is roughly correct
+        for rectangle in rectangles:
+            if not rectangle_shape_check(rectangle, card_height_width):
+                rectangles.remove(rectangle)
+
         if len(rectangles) == 0:
             logging.warning("No rectangles found")
             return None
