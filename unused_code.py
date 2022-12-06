@@ -1,4 +1,4 @@
-    def extract_card_colour(self):
+    def image_functions_colour(self):
         if self.edge_method is not None:
             if self.edge_method == "HSV":
                 colour = [247 / 2, 7 * 255 / 100, 45 * 255 / 100]

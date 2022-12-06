@@ -1,7 +1,7 @@
 import cv2
 
-from read_card.image_check import num_channels_check
-from read_card.transform_image import create_grey
+from image_functions.image_check import num_channels_check
+from image_functions.transform_image import create_grey
 
 
 def get_contours(image):

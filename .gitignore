@@ -1,2 +1,5 @@
 vm_card_reader
 __pycache__
+*.png
+*.jpg
+*.jpeg

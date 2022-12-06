@@ -1,6 +1,6 @@
 import cv2
 
-from read_card.find_rectangles import get_contours
+from image_functions.find_rectangles import get_contours
 
 
 def draw_contours(image, contours):
