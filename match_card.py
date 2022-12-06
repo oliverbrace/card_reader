@@ -5,6 +5,8 @@ import pandas as pd
 
 
 class MatchCard:
+    """Use text from card to find most likely corresponding card"""
+
     def __init__(self, found_card_name):
         self.found_card_name = found_card_name
         self.matched_card_name = None
@@ -37,4 +39,4 @@ def all():
         logging.warning(match_card(unmatched_title))
 
 
-all()
+# all()

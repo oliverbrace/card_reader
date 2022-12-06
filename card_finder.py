@@ -6,37 +6,20 @@ from card_settings import card_height_width
 from image_functions.draw_rectangles import draw_rectangle
 from image_functions.edge_detection import apply_mask, simple_edge_mask
 from image_functions.find_rectangles import find_biggest_rectangle, get_rectangles
-from image_functions.get_image import read_saved_image
-from image_functions.image_check import get_image_size, rectangle_shape_check
+from image_functions.image_check import rectangle_shape_check
 from image_functions.transform_image import crop_image
+from serialize_image import ImageSerialize
 
 
-class CardExtractor:
+class CardFinder(ImageSerialize):
     """Finds the Card in an Image"""
 
     def __init__(self):
-        self.original_image = None
         self.border_image = None
         self.found_card_image = None
         self.card_image = None
         self.image_height = None
         self.image_width = None
-
-    def load_file_image(self, filename):
-        self.original_image = read_saved_image(filename)
-        self.image_height, self.image_width = get_image_size(self.original_image)
-        logging.info("Loaded file image")
-
-    def load_image(self, image):
-        self.original_image = image
-        self.image_height, self.image_width = get_image_size(self.original_image)
-        logging.info("Loaded image")
-
-    def output_image(self, image, file_name="test_image"):
-        cv2.imwrite(
-            f"temp_images/{file_name}.png",
-            image,
-        )
 
     def find_card(self):
         mask = simple_edge_mask(self.original_image)
@@ -68,14 +51,11 @@ class CardExtractor:
 
         if rectangle is not None:
             self.found_card_image = draw_rectangle(self.original_image, rectangle)
-        else:
-            self.found_card_image = self.original_image
-
-        self.card_image = crop_image(self.original_image, rectangle)
+            self.card_image = crop_image(self.original_image, rectangle)
 
 
 def run_card_read(card_number):
-    card_reader = CardExtractor()
+    card_reader = CardFinder()
     card_reader.load_file_image(f"card_{card_number}.jpeg")
     card_reader()
 

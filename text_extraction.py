@@ -1,4 +1,5 @@
 import csv
+import logging
 import re
 
 from card_settings import (
@@ -9,9 +10,10 @@ from card_settings import (
 )
 from image_functions.transform_image import create_grey, crop_image
 from read_text import find_text_in_image
+from serialize_image import ImageSerialize
 
 
-class TextExtraction:
+class TextExtraction(ImageSerialize):
     """Extracts the text from Card Image"""
 
     def __init__(self):
@@ -26,7 +28,7 @@ class TextExtraction:
     def find_text_rect(self):
         # Assumes height is roughly correct
         rectangle = []
-        height = self.card_image.shape[0]
+        height = self.original_image.shape[0]
         rectangle.append(height * text_s_w_percentage)
         rectangle.append(height * text_s_h_percentage)
         rectangle.append(height * text_w_percentage)
@@ -35,8 +37,19 @@ class TextExtraction:
         return rectangle
 
     def __call__(self):
+        if self.original_image is None:
+            logging.error("No image has been loaded in")
+            return
+
         text_rectangle = self.find_text_rect()
-        self.card_image = crop_image(self.card_image, text_rectangle)
+        self.card_image = crop_image(self.original_image, text_rectangle)
         self.card_image = create_grey(self.card_image)
         self.text = find_text_in_image(self.card_image)
-        self.save_title_to_file()
+        # self.save_title_to_file()
+
+
+def run():
+    textE = TextExtraction()
+    textE.load_file_image("blurry_text.png")
+    textE()
+    logging.info(textE.text)

@@ -6,10 +6,10 @@
     "configurations": [
         {"name":"Python: camera_feed","type":"python","request":"launch","program":"camera_feed.py","console":"integratedTerminal","justMyCode":true},
         {
-            "name": "Python: card_reader",
+            "name": "Python: card_finder",
             "type": "python",
             "request": "launch",
-            "program": "card_reader.py",
+            "program": "card_finder.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }
