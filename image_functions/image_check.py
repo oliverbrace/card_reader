@@ -24,7 +24,7 @@ def rectangle_shape_check(rectangle, height_width_ratio, margin_of_error=0.1):
     Checks if image has roughly correct dimensions
     """
     if margin_of_error < 0:
-        raise ("margin_of_error must be greater than 0")
+        raise Exception("margin_of_error must be greater than 0")
 
     _, _, width, height = rectangle
     image_height_width_ratio = height / width

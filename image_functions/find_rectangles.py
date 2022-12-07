@@ -66,7 +66,7 @@ def find_biggest_rectangle(rectangles):
         tuple: xStart, yStart, width, height
     """
     if not len(rectangles):
-        raise "No rectangles provided"
+        raise Exception("No rectangles provided")
 
     biggest_rectangle_index = 0
     for index, rect in enumerate(rectangles):

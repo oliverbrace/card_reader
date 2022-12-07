@@ -1,14 +1,12 @@
 import logging
 
-import cv2
-
 from card_settings import card_height_width
 from image_functions.draw_rectangles import draw_rectangle
 from image_functions.edge_detection import apply_mask, simple_edge_mask
 from image_functions.find_rectangles import find_biggest_rectangle, get_rectangles
 from image_functions.image_check import rectangle_shape_check
+from image_functions.serialize_image import ImageSerialize
 from image_functions.transform_image import crop_image
-from serialize_image import ImageSerialize
 
 
 class CardFinder(ImageSerialize):
@@ -60,7 +58,7 @@ def run_card_read(card_number):
     card_reader()
 
     # logging.warning(re.sub("[^0-9A-Z]+", "", card_reader.text.upper()))
-    card_reader.output_image(card_reader.found_card_image, f"test_image_{card_number}")
+    card_reader.output_image(card_reader.card_image, f"test_image_{card_number}")
 
 
 def all():
@@ -68,5 +66,5 @@ def all():
         run_card_read(card_number)
 
 
-run_card_read("7_v2")
-# all()
+# run_card_read("7_v2")
+all()

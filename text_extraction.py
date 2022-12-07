@@ -8,9 +8,9 @@ from card_settings import (
     text_s_w_percentage,
     text_w_percentage,
 )
+from image_functions.serialize_image import ImageSerialize
 from image_functions.transform_image import create_grey, crop_image
 from read_text import find_text_in_image
-from serialize_image import ImageSerialize
 
 
 class TextExtraction(ImageSerialize):
@@ -44,12 +44,22 @@ class TextExtraction(ImageSerialize):
         text_rectangle = self.find_text_rect()
         self.card_image = crop_image(self.original_image, text_rectangle)
         self.card_image = create_grey(self.card_image)
+
         self.text = find_text_in_image(self.card_image)
         # self.save_title_to_file()
 
 
-def run():
+def run(card_number):
     textE = TextExtraction()
-    textE.load_file_image("blurry_text.png")
+    textE.load_file_image(f"test_image_{card_number}.png", path="temp_images/")
     textE()
-    logging.info(textE.text)
+    textE.output_image(textE.card_image, f"test_image_{card_number}")
+
+
+def all():
+    for card_number in range(1 9):
+        run(card_number)
+
+
+# all()
+# run(1)

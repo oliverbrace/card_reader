@@ -1,0 +1,19 @@
+import logging
+
+import cv2
+import numpy as np
+from scipy import ndimage
+
+from image_functions.edge_detection import prewitt_edge, roberts_crossover, sobel_edge
+from image_functions.get_image import read_saved_image
+from image_functions.image_check import get_image_size
+from read_text import find_text_in_image
+
+image = read_saved_image("test_imagfe_1.png", path="temp_images/")
+print(find_text_in_image(image))
+# image = read_saved_image("unblured_text_e.png")
+# print(find_text_in_image(image))
+# image = read_saved_image("unblured_text_p.png")
+# print(find_text_in_image(image))
+# image = read_saved_image("unblured_text_r.png")
+# print(find_text_in_image(image))

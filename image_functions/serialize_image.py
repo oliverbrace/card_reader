@@ -12,8 +12,8 @@ class ImageSerialize:
         self.image_height = None
         self.image_width = None
 
-    def load_file_image(self, filename):
-        self.original_image = read_saved_image(filename)
+    def load_file_image(self, filename, path="cards/"):
+        self.original_image = read_saved_image(filename, path=path)
         self.image_height, self.image_width = get_image_size(self.original_image)
         logging.info("Loaded file image")
 
@@ -27,7 +27,3 @@ class ImageSerialize:
             f"temp_images/{file_name}.png",
             image,
         )
-
-
-image = read_saved_image("blurry_text.png")
-cv2.blur(image, (5, 5))

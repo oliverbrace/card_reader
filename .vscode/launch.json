@@ -1,17 +1,32 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {"name":"Python: camera_feed","type":"python","request":"launch","program":"camera_feed.py","console":"integratedTerminal","justMyCode":true},
-        {
-            "name": "Python: card_finder",
-            "type": "python",
-            "request": "launch",
-            "program": "card_finder.py",
-            "console": "integratedTerminal",
-            "justMyCode": true
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: text_extraction",
+      "type": "python",
+      "request": "launch",
+      "program": "text_extraction.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Python: camera_feed",
+      "type": "python",
+      "request": "launch",
+      "program": "camera_feed.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Python: card_finder",
+      "type": "python",
+      "request": "launch",
+      "program": "card_finder.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
 }

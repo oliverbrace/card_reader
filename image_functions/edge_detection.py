@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from scipy import ndimage
 from skspatial.objects import Line, Sphere
 
 
@@ -103,3 +104,40 @@ def simple_edge_mask(image):
     upper = np.array([360 / 2, 100, 200])
 
     return generate_mask(image, cv2.COLOR_BGR2HSV, lower, upper)
+
+
+def edge_detection(img, v_operator, h_operator):
+    # normalize the image
+    img = img.astype("float64")
+    img /= 255.0
+
+    # convolve with v_operator and h_operator
+    vertical = ndimage.convolve(img, v_operator)
+    horizontal = ndimage.convolve(img, h_operator)
+
+    # calculate the edged image
+    edged_img = np.sqrt(np.square(horizontal) + np.square(vertical))
+    edged_img *= 255
+
+    return edged_img
+
+
+def roberts_crossover(img):
+    # setup the variables
+    roberts_cross_v = np.array([[1, 0], [0, -1]])
+    roberts_cross_h = np.array([[0, 1], [-1, 0]])
+    return edge_detection(img, roberts_cross_v, roberts_cross_h)
+
+
+def sobel_edge(img):
+    # setup the variables
+    sobel_v = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+    sobel_h = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+    return edge_detection(img, sobel_v, sobel_h)
+
+
+def prewitt_edge(img):
+    # setup the variables
+    prewitt_v = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+    prewitt_h = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
+    return edge_detection(img, prewitt_v, prewitt_h)
