@@ -12,7 +12,7 @@ class ImageSerialize:
         self.image_height = None
         self.image_width = None
 
-    def load_file_image(self, filename, path="cards/"):
+    def load_file_image(self, filename, path="images/cards/"):
         self.original_image = read_saved_image(filename, path=path)
         self.image_height, self.image_width = get_image_size(self.original_image)
         logging.info("Loaded file image")
@@ -22,8 +22,11 @@ class ImageSerialize:
         self.image_height, self.image_width = get_image_size(self.original_image)
         logging.info("Loaded image")
 
-    def output_image(self, image, file_name="test_image"):
+    def output_image(self, image, file_name="test_image", path="images/temp_images"):
+        if image is None:
+            raise Exception("No image provided")
+
         cv2.imwrite(
-            f"temp_images/{file_name}.png",
+            f"{path}/{file_name}.png",
             image,
         )

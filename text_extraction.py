@@ -57,7 +57,7 @@ def run(card_number):
 
 
 def all():
-    for card_number in range(1 9):
+    for card_number in range(1, 9):
         run(card_number)
 
 

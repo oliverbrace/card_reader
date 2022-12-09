@@ -19,7 +19,12 @@ def get_image_size(image):
     return image_shape[0], image_shape[1]
 
 
-def rectangle_shape_check(rectangle, height_width_ratio, margin_of_error=0.1):
+def get_pixel_count(image):
+    height, width = get_image_size(image)
+    return height * width
+
+
+def rectangle_shape_check(rectangle, height_width_ratio, margin_of_error=0.15):
     """
     Checks if image has roughly correct dimensions
     """
@@ -40,3 +45,34 @@ def mean_squared_error(img1, img2):
     err = np.sum(diff**2)
     mse = err / (float(h * w))
     return mse
+
+
+def percentage_black_pixels(image):
+    """_summary_
+
+    Args:
+        image (_type_):
+    """
+    return percentage_colour_pixels(image, 0)
+
+
+def percentage_white_pixels(image):
+    """_summary_
+
+    Args:
+        image (_type_):
+    """
+    return percentage_colour_pixels(image, 255)
+
+
+def percentage_colour_pixels(image, colour):
+    """_summary_
+
+    Args:
+        image (_type_): image
+        colour (int): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    return np.sum(image == colour) / get_pixel_count(image)

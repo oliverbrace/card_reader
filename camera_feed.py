@@ -10,7 +10,12 @@ from image_functions.image_check import mean_squared_error
 from match_card import MatchCard
 from text_extraction import TextExtraction
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+frame_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+frame_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
 # Check if the webcam is opened correctly
 if not cap.isOpened():
@@ -29,15 +34,17 @@ while True:
     if card_reader.found_card_image is not None:
         cv2.imshow("Input", card_reader.found_card_image)
         if c == ord("a"):
+            pass
             # card_reader.output_image(card_reader.found_card_image, f"video_test")
-            textE = TextExtraction(card_reader.card_image)
-            textE()
-            if textE.text is not None:
-                matchC = MatchCard(textE.text)
-                matchC()
-                logging.info(matchC.matched_card_name)
+            # textE = TextExtraction()
+            # textE.load_image(card_reader.card_image)
+            # textE()
+            # if textE.text is not None:
+            #     matchC = MatchCard(textE.text)
+            #     matchC()
+            #     logging.info(matchC.matched_card_name)
     else:
-        cv2.imshow("Input", original_frame)
+        cv2.imshow("Input", card_reader.border_image)
 
     if c == 27:
         break

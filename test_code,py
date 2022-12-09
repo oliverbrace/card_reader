@@ -4,16 +4,26 @@ import cv2
 import numpy as np
 from scipy import ndimage
 
-from image_functions.edge_detection import prewitt_edge, roberts_crossover, sobel_edge
+from image_functions.clean_image import closing, opening
+from image_functions.edge_detection import sobel_edge
 from image_functions.get_image import read_saved_image
-from image_functions.image_check import get_image_size
+from image_functions.image_check import (
+    get_image_size,
+    percentage_black_pixels,
+    percentage_white_pixels,
+)
+from image_functions.serialize_image import ImageSerialize
+from image_functions.transform_image import grey_to_bl, invert_black_white
 from read_text import find_text_in_image
 
-image = read_saved_image("test_imagfe_1.png", path="temp_images/")
-print(find_text_in_image(image))
-# image = read_saved_image("unblured_text_e.png")
-# print(find_text_in_image(image))
-# image = read_saved_image("unblured_text_p.png")
-# print(find_text_in_image(image))
-# image = read_saved_image("unblured_text_r.png")
-# print(find_text_in_image(image))
+#! Figure out if black and white image can be used.
+#! May need to detect the amount of one of them in an image
+# Thresh of 127 for black_white seemed to be best but was still bad
+
+# Save all images
+for i in range(1, 9):
+    image = read_saved_image(f"card_{i}.jpeg")
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.GaussianBlur(image, (11, 11), 0)
+    image = cv2.Canny(image=image, threshold1=50, threshold2=230)
+    ImageSerialize().output_image(image, f"test_{i}")

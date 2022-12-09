@@ -5,10 +5,13 @@ from image_functions.transform_image import create_grey
 
 
 def get_contours(image):
-    grey_image = create_grey(image)
+    try:
+        image = create_grey(image)
+    except:
+        pass
 
     contours, hierarchy = cv2.findContours(
-        image=grey_image, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE
+        image=image, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE
     )
     return contours
 
@@ -24,7 +27,7 @@ def get_rectangle_size(rectangle):
 
 def get_rectangles(
     image,
-    min_size=200,
+    min_size=0,
     max_size=1000000,
     rect_min_width=15,
     rect_min_height=25,

@@ -4,9 +4,9 @@ Load image in or get image from video stream
 import cv2
 
 
-def read_saved_image(filename, colour=True, path="cards/"):
+def read_saved_image(filename, colour=True, path="images/cards"):
     image = cv2.imread(
-        path + filename,
+        path + "/" + filename,
         cv2.IMREAD_UNCHANGED if colour else cv2.IMREAD_GRAYSCALE,
     )
 

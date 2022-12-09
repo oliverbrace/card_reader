@@ -141,3 +141,9 @@ def prewitt_edge(img):
     prewitt_v = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
     prewitt_h = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
     return edge_detection(img, prewitt_v, prewitt_h)
+
+
+def canny_edge_detection(image, blur=7, threshold1=40, threshold2=100):
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.GaussianBlur(image, (blur, blur), 0)
+    return cv2.Canny(image=image, threshold1=threshold1, threshold2=threshold2)
