@@ -1,6 +1,8 @@
 import cv2
+import numpy as np
 
 from image_functions.find_rectangles import get_contours
+from image_functions.image_check import get_image_size
 
 
 def draw_contours(image, contours):
@@ -49,3 +51,29 @@ def draw_multiple_rectangles(image, rectangles, thickness=2):
         )
 
     return image_rect
+
+
+def darken_outside_rectangle(image, rectangle):
+    """Will darken everything outside of provided rectangle
+
+    Args:
+        image (_type_): image where you want to darken
+        rectangle (_type_): [xStart, yStart, width, height]
+
+    Returns:
+        _type_: _description_
+    """
+
+    # Get image size
+    height, width = get_image_size(image)
+
+    # Create a new image and with previous image dimensions
+    blank_image = np.zeros((height, width))
+
+    # Create a rectangle with the desired dimensions
+    rectangle_image = draw_rectangle(blank_image, rectangle, colour=(255, 255, 255))
+
+    # Make everything outside the rectangle darker
+    image[rectangle_image == 0] = 0.5 * image[rectangle_image == 0]
+
+    return image
