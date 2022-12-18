@@ -16,6 +16,7 @@ def find_text_in_image(image, psm=7):
         text = pytesseract.image_to_string(image, config=custom_config)
     except:
         logging.warning("pytesseract Failed")
+        print("pytesseract Failed")
         text = None
 
     return text

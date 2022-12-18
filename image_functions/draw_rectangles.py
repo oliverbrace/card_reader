@@ -63,9 +63,10 @@ def darken_outside_rectangle(image, rectangle):
     Returns:
         _type_: _description_
     """
+    image_copy = image.copy()
 
     # Get image size
-    height, width = get_image_size(image)
+    height, width = get_image_size(image_copy)
 
     # Create a new image and with previous image dimensions
     blank_image = np.zeros((height, width))
@@ -74,6 +75,6 @@ def darken_outside_rectangle(image, rectangle):
     rectangle_image = draw_rectangle(blank_image, rectangle, colour=(255, 255, 255))
 
     # Make everything outside the rectangle darker
-    image[rectangle_image == 0] = 0.5 * image[rectangle_image == 0]
+    image_copy[rectangle_image == 0] = 0.5 * image_copy[rectangle_image == 0]
 
-    return image
+    return image_copy

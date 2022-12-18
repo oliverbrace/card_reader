@@ -1,7 +1,5 @@
 import logging
-
-import cv2
-import numpy as np
+import os
 
 from card_settings import card_height_width
 from image_functions.draw_rectangles import (
@@ -88,15 +86,22 @@ class CardFinder(ImageSerialize):
                 self.canny_edge_image, rectangle, thickness=1
             )
 
-            self.card_image = paste_image(
+            self.found_card_image = paste_image(
                 self.dimmed_image,
                 self.found_card_image,
                 center_rectangle[0],
                 center_rectangle[1],
             )
-            # self.output_image(image, f"mixed_card")
+            shifted_rectangle = [
+                rectangle[0] + center_rectangle[0],
+                rectangle[1] + center_rectangle[1],
+                rectangle[2],
+                rectangle[3],
+            ]
+
+            self.card_image = crop_image(self.original_image, shifted_rectangle)
         else:
-            self.card_image = paste_image(
+            self.canny_edge_image = paste_image(
                 self.dimmed_image,
                 self.canny_edge_image,
                 center_rectangle[0],
@@ -104,16 +109,19 @@ class CardFinder(ImageSerialize):
             )
 
 
-def run_card_read(card_number):
+def run_card_read(file):
     card_reader = CardFinder()
-    card_reader.load_file_image(f"{card_number}.png")
+    card_reader.load_file_image(file)
     card_reader()
+    file = file.split(".")[0]
+    card_reader.output_image(card_reader.card_image, f"{file}_extract")
 
 
 def all():
-    for card_number in range(1, 9):
-        run_card_read(card_number)
+    files = os.listdir("images/cards")
+    for file in files:
+        run_card_read(file)
 
 
-run_card_read("video_image")
+# run_card_read("video_image")
 # all()

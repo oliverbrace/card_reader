@@ -34,7 +34,8 @@ while True:
     if card_reader.found_card_image is not None:
         cv2.imshow("Input", card_reader.found_card_image)
         if c == ord("a"):
-            pass
+            card_reader.output_image(card_reader.card_image, "video_test")
+            break
             # card_reader.output_image(card_reader.found_card_image, f"video_test")
             # textE = TextExtraction()
             # textE.load_image(card_reader.card_image)
@@ -44,7 +45,7 @@ while True:
             #     matchC()
             #     logging.info(matchC.matched_card_name)
     else:
-        cv2.imshow("Input", card_reader.border_image)
+        cv2.imshow("Input", card_reader.canny_edge_image)
 
     if c == 27:
         break

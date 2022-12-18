@@ -1,3 +1,5 @@
+import logging
+
 import cv2
 import numpy as np
 from scipy import ndimage
@@ -144,6 +146,10 @@ def prewitt_edge(img):
 
 
 def canny_edge_detection(image, blur=7, threshold1=40, threshold2=100):
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    try:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    except:
+        logging.warning("Image may already be grey so skipping step")
+
     image = cv2.GaussianBlur(image, (blur, blur), 0)
     return cv2.Canny(image=image, threshold1=threshold1, threshold2=threshold2)
