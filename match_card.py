@@ -20,11 +20,17 @@ class MatchCard:
         else:
             matched_transformed_card_name = difflib.get_close_matches(
                 self.found_card_name, transformed_card_names, n=1
-            )[0]
+            )
 
-            self.matched_card_name = cards_df[
-                transformed_card_names == matched_transformed_card_name
+        if len(matched_transformed_card_name) != 0:
+            card_name = cards_df[
+                transformed_card_names == matched_transformed_card_name[0]
             ]["Name"].iloc[0]
+
+            self.matched_card_name = card_name
+            logging.info(f"Card match: {card_name}")
+        else:
+            logging.warning("Failed to find card. Try again.")
 
 
 def match_card(unmatched_title):

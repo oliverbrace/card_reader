@@ -35,6 +35,14 @@
       "program": "add_info_db.py",
       "console": "integratedTerminal",
       "justMyCode": true
+    },
+    {
+      "name": "Python: match_card",
+      "type": "python",
+      "request": "launch",
+      "program": "match_card.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
     }
   ]
 }
