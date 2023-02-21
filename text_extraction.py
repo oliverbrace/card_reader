@@ -3,8 +3,6 @@ import logging
 import os
 import re
 
-import cv2
-
 from card_settings import (
     text_h_percentage,
     text_s_h_percentage,
@@ -97,5 +95,5 @@ def all():
         run(file)
 
 
-all()
+# all()
 # run("video_test.png")

@@ -27,6 +27,14 @@
       "program": "card_finder.py",
       "console": "integratedTerminal",
       "justMyCode": true
+    },
+    {
+      "name": "Python: card_data_append",
+      "type": "python",
+      "request": "launch",
+      "program": "add_info_db.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
     }
   ]
 }
