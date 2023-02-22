@@ -52,7 +52,7 @@ class CardFinder(ImageSerialize):
             rect_max_width=self.image_width * 0.9,
         )
         if len(rectangles) == 0:
-            logging.warning("no rectangle")
+            # logging.warning("no rectangle")
             return None
 
         # Check size of card is roughly correct

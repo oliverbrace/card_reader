@@ -73,8 +73,7 @@ class TextExtraction(ImageSerialize):
         # self.card_image = sharpen(self.card_image)
         # self.card_image = cv2.GaussianBlur(self.card_image, (5, 5), 0)
 
-        self.text = find_text_in_image(self.card_image)
-        print(self.text)
+        self.text = find_text_in_image(self.card_image, psm=8)
         # self.save_title_to_file()
 
 
@@ -86,7 +85,7 @@ def run(file):
     file = file.split(".")[0]
     textE.output_image(textE.card_image, f"text_{file}", path="images/text_images")
     if textE.text is not None:
-        logging.info(textE.text)
+        logging.warning(textE.text)
 
 
 def all():
