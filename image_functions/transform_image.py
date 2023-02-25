@@ -39,7 +39,7 @@ def crop_image(image, rect):
         rect (List): (xStart, yStart, width, height)
 
     Returns:
-        _type_: _description_
+        _type_: cropped image
     """
     scale_img_size = 0
     xStart = int(rect[0] * (1 - scale_img_size))
@@ -67,6 +67,16 @@ def paste_image(image1, image2, x, y):
 
 
 def gray_add_colour_dimension(image):
+    """Image will sometimes be missing it's third dimension
+        if it's missing some functions will break
+
+    Args:
+        image (_type_): An image
+
+    Returns:
+        _type_: oringal image but now with colour dimension
+    """
+
     height, width = get_image_size(image)
 
     # Create 8bit color image.

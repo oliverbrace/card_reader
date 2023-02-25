@@ -1,6 +1,5 @@
 import cv2
 
-from image_functions.image_check import num_channels_check
 from image_functions.transform_image import create_grey
 
 

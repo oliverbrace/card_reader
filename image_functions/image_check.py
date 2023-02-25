@@ -24,9 +24,18 @@ def get_pixel_count(image):
     return height * width
 
 
-def rectangle_shape_check(rectangle, height_width_ratio, margin_of_error=0.15):
-    """
-    Checks if image has roughly correct dimensions
+def rectangle_shape_check(rectangle, margin_of_error=0.15):
+    """Checks if image has roughly correct dimensions
+
+    Args:
+        rectangle (List): (xStart, yStart, width, height)
+        margin_of_error (float, optional): margin_of_error. Defaults to 0.15.
+
+    Raises:
+        Exception: if margin_of_error is less than 0
+
+    Returns:
+        Bool: Is correct size check
     """
     if margin_of_error < 0:
         raise Exception("margin_of_error must be greater than 0")
