@@ -1,6 +1,7 @@
 card_height = 8.6
 card_width = 5.9
-card_height_width = card_height / card_width
+# * 1.4576271186440677
+card_ratio = card_height / card_width
 
 text_start_height = 0.4
 text_s_h_percentage = text_start_height / card_height

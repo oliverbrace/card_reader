@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+from card_settings import card_ratio
+
 
 def num_channels_check(img):
     return img.ndim
@@ -42,9 +44,8 @@ def rectangle_shape_check(rectangle, margin_of_error=0.15):
 
     _, _, width, height = rectangle
     image_height_width_ratio = height / width
-    return (
-        height_width_ratio * (1 + margin_of_error) > image_height_width_ratio
-        and height_width_ratio * (1 - margin_of_error) < image_height_width_ratio
+    return (card_ratio * (1 + margin_of_error) > image_height_width_ratio) and (
+        card_ratio * (1 - margin_of_error) < image_height_width_ratio
     )
 
 

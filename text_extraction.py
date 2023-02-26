@@ -1,5 +1,4 @@
 import csv
-import logging
 import os
 import re
 
@@ -9,7 +8,7 @@ from card_settings import (
     text_s_w_percentage,
     text_w_percentage,
 )
-from image_functions.clean_image import opening, sharpen
+from image_functions.clean_image import closing, opening, sharpen
 from image_functions.edge_detection import canny_edge_detection
 from image_functions.serialize_image import ImageSerialize
 from image_functions.transform_image import (
@@ -18,7 +17,10 @@ from image_functions.transform_image import (
     grey_to_bl,
     invert_black_white,
 )
+from logger import Logger
 from read_text import find_text_in_image
+
+logger = Logger().load_logger()
 
 
 class TextExtraction(ImageSerialize):
@@ -34,6 +36,12 @@ class TextExtraction(ImageSerialize):
             writer.writerow([re.sub("[^0-9A-Z-]+", "", self.text).upper()])
 
     def find_text_rect(self):
+        """_summary_
+
+        Returns:
+            List: (xStart, yStart, width, height)
+        """
+
         # Assumes height is roughly correct
         rectangle = []
         height = self.original_image.shape[0]
@@ -46,20 +54,20 @@ class TextExtraction(ImageSerialize):
 
     def __call__(self):
         if self.original_image is None:
-            logging.error("No image has been loaded in")
+            logger.error("No image has been loaded in")
             return
 
         text_rectangle = self.find_text_rect()
         self.card_image = crop_image(self.original_image, text_rectangle)
-
+        self.card_image = create_grey(self.card_image)
+        self.text = find_text_in_image(self.card_image, psm=7)
         # De noise image
         # self.card_image = opening(self.card_image, 2)
-        self.card_image = create_grey(self.card_image)
+        # self.card_image = create_grey(self.card_image)
         # self.card_image = invert_black_white(self.card_image)
         # self.card_image = cv2.equalizeHist(self.card_image)
         # self.card_image = grey_to_bl(self.card_image, thresh=40)
 
-        # self.card_image = crop_image(self.card_image, text_rectangle)
         # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(4, 4))
         # self.card_image = clahe.apply(self.card_image)
         # self.card_image = cv2.adaptiveThreshold(
@@ -73,25 +81,36 @@ class TextExtraction(ImageSerialize):
         # self.card_image = sharpen(self.card_image)
         # self.card_image = cv2.GaussianBlur(self.card_image, (5, 5), 0)
 
-        self.text = find_text_in_image(self.card_image, psm=8)
+        # self.text = find_text_in_image(self.card_image, psm=8)
         # self.save_title_to_file()
 
 
-def run(file):
-    textE = TextExtraction()
-    textE.load_file_image(file, path="images/extracted_cards")
-    print(file)
-    textE()
-    file = file.split(".")[0]
-    textE.output_image(textE.card_image, f"text_{file}", path="images/text_images")
-    if textE.text is not None:
-        logging.warning(textE.text)
+def run(file, path="images/extracted_cards"):
+    textE1 = TextExtraction()
+    textE1.load_file_image(file, path=path)
+    textE1()
+
+    textE1.card_image = create_grey(textE1.card_image)
+    # textE1.card_image = closing(textE1.card_image, 3)
+    textE1.card_image = invert_black_white(textE1.card_image)
+    textE1.text = find_text_in_image(textE1.card_image, psm=7)
+
+    textE2 = TextExtraction()
+    textE2.load_file_image(file, path=path)
+    textE2()
+
+    textE2.card_image = invert_black_white(textE2.card_image)
+    textE2.card_image = create_grey(textE2.card_image)
+    textE2.text = find_text_in_image(textE2.card_image, psm=7)
+    logger.info(f"One {textE1.text}")
+    logger.info(f"Two {textE2.text}")
 
 
 def all():
-    files = os.listdir("images/extracted_cards")
+    path = "images/video_extract"
+    files = os.listdir(path)
     for file in files:
-        run(file)
+        run(file, path=path)
 
 
 # all()

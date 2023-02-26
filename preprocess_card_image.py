@@ -24,28 +24,28 @@ class ImagePreprocessing(ImageSerialize):
         self.dimmed_image = None
         self.canny_edge_image = None
         self.display_image = None
+        self.center_rectangle = None
 
-    def create_canny_edge_image(self):
+    def _create_canny_edge_image(self):
         if self.center_image is None:
             raise Exception("No canny_edge image")
 
         canny_edge_image = canny_edge_detection(self.center_image, blur=7)
         return gray_add_colour_dimension(canny_edge_image)
 
-    def find_center_rectangle(self):
+    def _find_center_rectangle(self):
         """Creates a rectangle that shares the same center and height as the
             original image but has the same ratio as a card
 
         Returns:
-            List: Rectangle that has same height as original image
-                but width that is proportional to a card_ratio
+            List: [xStart, yStart, width, height]
         """
         height = self.image_height
         estimated_width = height / card_ratio
-        width_start_point = int(self.image_width / 2 - estimated_width / 2)
+        width_start_point = int((self.image_width - estimated_width) / 2)
         return [width_start_point, 0, int(estimated_width), height]
 
-    def paste_canny_into_dimmed(self, center_rectangle):
+    def _paste_canny_into_dimmed(self, center_rectangle):
         """Paste the canny_edge_image into the
         dimmed_image so that they have the same center point
 
@@ -60,14 +60,24 @@ class ImagePreprocessing(ImageSerialize):
             center_rectangle[1],
         )
 
+    def add_new_center_image(self, new_center_image):
+        center_rectangle = self.center_rectangle
+
+        paste_image(
+            self.dimmed_image,
+            new_center_image,
+            center_rectangle[0],
+            center_rectangle[1],
+        )
+
     def __call__(self):
-        center_rectangle = self.find_center_rectangle()
-        self.center_image = crop_image(self.original_image, center_rectangle)
-        self.canny_edge_image = self.create_canny_edge_image()
+        self.center_rectangle = self._find_center_rectangle()
+        self.center_image = crop_image(self.original_image, self.center_rectangle)
 
         # This is just so that it looks good when displayed to screen.
         self.dimmed_image = darken_outside_rectangle(
-            self.original_image, center_rectangle
+            self.original_image, self.center_rectangle
         )
 
-        self.display_image = self.paste_canny_into_dimmed()
+        self.canny_edge_image = self._create_canny_edge_image()
+        self.display_image = self._paste_canny_into_dimmed(self.center_rectangle)
