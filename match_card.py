@@ -30,7 +30,8 @@ class MatchCard:
             self.matched_card_name = card_name
             logging.info(f"Card match: {card_name}")
         else:
-            logging.warning("Failed to find card. Try again.")
+            # logging.warning("Failed to find card. Try again.")
+            pass
 
 
 def match_card(unmatched_title):

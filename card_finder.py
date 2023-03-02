@@ -12,11 +12,10 @@ from image_functions.transform_image import crop_image, gray_add_colour_dimensio
 class CardFinder(ImageSerialize):
     """Finds the Card in an Image"""
 
-    def __init__(self, is_original_canny=False):
+    def __init__(self):
         # image_height, image_width and original_image
         super().__init__()
 
-        self.is_original_canny = is_original_canny
         self.canny_edge_image = None
         self.found_card_image = None
         self.card_image = None
@@ -52,10 +51,7 @@ class CardFinder(ImageSerialize):
         if self.original_image is None:
             raise Exception("No image provided")
 
-        if self.is_original_canny:
-            self.canny_edge_image = self.original_image
-        else:
-            self.canny_edge_image = self.create_canny_edge_image()
+        self.canny_edge_image = self.create_canny_edge_image()
 
         rectangle = self.find_card()
 

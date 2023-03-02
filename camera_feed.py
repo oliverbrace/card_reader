@@ -47,8 +47,8 @@ def camera_feed():
         image_preprocessing.load_image(original_frame)
         image_preprocessing()
 
-        card_reader = CardFinder(is_original_canny=True)
-        card_reader.load_image(image_preprocessing.canny_edge_image)
+        card_reader = CardFinder()
+        card_reader.load_image(image_preprocessing.center_image)
         card_reader()
         if card_reader.found_card_image is None:
             cv2.imshow("Input", image_preprocessing.display_image)
@@ -60,23 +60,17 @@ def camera_feed():
         textE = TextExtraction()
         textE.load_image(card_reader.card_image)
         textE()
-        if textE.text is None:
+        if textE.text is None or textE.text == "":
             # logger.warning("No text found")
             continue
 
-        logger.info(f"Text found: {textE.text}")
+        # logger.info(f"Text found: {textE.text}")
 
-        if c == ord("a"):
-            # i = i + 1
-            # card_reader.output_image(
-            #     card_reader.card_image, f"image_{i}", path="images/video_extract"
-            # )
-            matchC = MatchCard(textE.text)
-            matchC()
-            if matchC.matched_card_name is None:
-                continue
-
-            break
+        # if c == ord("a"):
+        matchC = MatchCard(textE.text)
+        matchC()
+        if matchC.matched_card_name is None:
+            continue
 
     cap.release()
     cv2.destroyAllWindows()
