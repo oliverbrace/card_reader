@@ -19,7 +19,7 @@ class MatchCard:
             self.matched_card_name = self.found_card_name
         else:
             matched_transformed_card_name = difflib.get_close_matches(
-                self.found_card_name, transformed_card_names, n=1
+                self.found_card_name, transformed_card_names, n=1, cutoff=0.8
             )
 
         if len(matched_transformed_card_name) != 0:
@@ -38,12 +38,3 @@ def match_card(unmatched_title):
     mc = MatchCard(unmatched_title)
     mc()
     return mc.matched_card_name
-
-
-def all():
-    unmatched_titles = pd.read_csv("unmatched_titles.csv")["titles"]
-    for unmatched_title in unmatched_titles:
-        logging.warning(match_card(unmatched_title))
-
-
-# all()
