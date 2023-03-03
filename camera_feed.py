@@ -5,6 +5,7 @@ import logging
 
 import cv2
 
+from add_info_db import CardRegisterAdder
 from card_finder import CardFinder
 from logger import Logger
 from match_card import MatchCard
@@ -12,6 +13,19 @@ from preprocess_card_image import ImagePreprocessing
 from text_extraction import TextExtraction
 
 logger = Logger().load_logger()
+
+
+def card_check(card_name):
+    query = f"Is {card_name} your card? (Y/N)"
+
+    while True:
+        response = input(query).upper()
+        if response == "Y":
+            return True
+        elif response == "N":
+            return False
+        else:
+            print("Please put either Y or N")
 
 
 def camera_feed():
@@ -38,6 +52,7 @@ def camera_feed():
         if c == 27:
             break
 
+        attempted_cards = []
         ret, original_frame = cap.read()
         original_frame = cv2.resize(
             original_frame, None, fx=1, fy=1, interpolation=cv2.INTER_AREA
@@ -71,6 +86,19 @@ def camera_feed():
         matchC()
         if matchC.matched_card_name is None:
             continue
+
+        if matchC.matched_card_name in attempted_cards:
+            continue
+
+        found_card = card_check(matchC.matched_card_name)
+        if not found_card:
+            found_card.append(matchC.matched_card_name)
+            continue
+
+        card_adder = CardRegisterAdder(matchC.matched_card_name)
+        card_adder()
+
+        break
 
     cap.release()
     cv2.destroyAllWindows()
