@@ -13,6 +13,34 @@ class CardRegisterAdder:
         self.highest_card_price = None
         self.lowest_card_price = None
         self.average_card_price = None
+        self.first_edition = None
+        self.damaged = None
+
+    @staticmethod
+    def damaged_q():
+        while True:
+            response = input("Is card damaged (Y/N)").upper()
+
+            # Check is number
+            if response == "Y":
+                return True
+            elif response == "N":
+                return False
+            else:
+                print("Please put either Y or N")
+
+    @staticmethod
+    def first_edition_q():
+        while True:
+            response = input("Is card first edition (Y/N)").upper()
+
+            # Check is number
+            if response == "Y":
+                return True
+            elif response == "N":
+                return False
+            else:
+                print("Please put either Y or N")
 
     @staticmethod
     def pick_rarity(item_list):
@@ -95,6 +123,8 @@ class CardRegisterAdder:
                 [
                     self.card_name,
                     self.rarity,
+                    self.first_edition,
+                    self.damaged,
                     self.average_card_price,
                     self.highest_card_price,
                     self.lowest_card_price,
@@ -107,6 +137,9 @@ class CardRegisterAdder:
 
         self.get_card_info()
         self.filter_card_info()
+
+        self.first_edition = self.first_edition_q()
+        self.damaged = self.damaged_q()
         self.write_card_to_csv()
 
 
