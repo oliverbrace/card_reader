@@ -5,6 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python: run_kivy_app",
+      "type": "python",
+      "request": "launch",
+      "program": "kivy/app.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Python: run_kivy_example",
+      "type": "python",
+      "request": "launch",
+      "program": "kivy/kivy_example.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "Python: text_extraction",
       "type": "python",
       "request": "launch",
