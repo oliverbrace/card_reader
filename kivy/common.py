@@ -5,8 +5,10 @@ from kivymd.uix.toolbar import MDTopAppBar
 
 
 class PageBanner(MDTopAppBar):
-    def __init__(self, title):
+    def __init__(self, title, previous_page=None):
         super().__init__()
+        if previous_page:
+            self.left_action_items = [["arrow-left", lambda x: previous_page()]]
 
         self.title = title
         self.elevation = 4

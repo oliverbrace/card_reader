@@ -1,57 +1,45 @@
-from kivymd.app import MDApp
-from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.card import MDCard
+import os
+import time
 
-from kivy.metrics import dp
+os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.camera import Camera
+from kivy.uix.togglebutton import ToggleButton
 
 
-class GapLayout(MDBoxLayout):
-    def __init__(self, widgets, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class CameraClick(BoxLayout):
+    def __init__(self, **kwargs):
+        super(CameraClick, self).__init__(**kwargs)
         self.orientation = "vertical"
-        gap_height = 0
+        self.camera = Camera(resolution=(640, 480), play=False)
+        self.add_widget(self.camera)
 
-        widgets_height = 0
-        for widget in widgets:
-            widgets_height += widget.height
+        play_button = ToggleButton(text="Play", size_hint_y=None, height="48dp")
+        play_button.bind(on_press=self.toggle_camera)
+        self.add_widget(play_button)
 
-        def update_gap_height(instance, value):
-            nonlocal gap_height
-            available_height = self.height - widgets_height
-            gap_height = available_height / (
-                len(widgets) + 1
-            )  # Divide by the number of gaps (3 cards + 2 gaps)
-            update_layout()
+        capture_button = Button(text="Capture", size_hint_y=None, height="48dp")
+        capture_button.bind(on_press=self.capture)
+        self.add_widget(capture_button)
 
-        def update_layout():
-            self.clear_widgets()
-            for widget in widgets:
-                self.add_widget(widget)
+    def toggle_camera(self, instance):
+        self.camera.play = not self.camera.play
 
-                # Add the gap between cards
-                gap = MDBoxLayout(size_hint=(1, None), height=gap_height)
-                self.add_widget(gap)
-
-        self.bind(size=update_gap_height)
-
-        update_gap_height(self, self.size)
+    def capture(self, instance):
+        """
+        Function to capture the images and give them the names
+        according to their captured time and date.
+        """
+        timestr = time.strftime("%Y%m%d_%H%M%S")
+        self.camera.export_to_png(f"IMG_{timestr}.png")
+        print("Captured")
 
 
-class TestApp(MDApp):
+class TestCamera(App):
     def build(self):
-        card1 = MDCard(
-            size_hint=(None, None),
-            height=dp(10),
-            width=dp(10),
-            md_bg_color=[0, 0, 0, 1],
-        )
-        card2 = MDCard(size_hint=(1, None), height=dp(20), md_bg_color=[0, 0, 0, 1])
-        card3 = MDCard(size_hint=(1, None), height=dp(30), md_bg_color=[0, 0, 0, 1])
-        card4 = MDCard(size_hint=(1, None), height=dp(40), md_bg_color=[0, 0, 0, 1])
-
-        root = GapLayout([card1, card2, card3, card4])
-        return root
+        return CameraClick()
 
 
-# Run the app
-TestApp().run()
+TestCamera().run()
