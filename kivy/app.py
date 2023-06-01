@@ -1,4 +1,5 @@
 from camera_page import CameraPage
+from display_page import DisplayPage
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
 from welcome_page import WelcomePage
@@ -12,10 +13,12 @@ class App(MDApp):
 
         welcome_page = WelcomePage(name="welcome_page")
         camera_page = CameraPage(name="camera_page")
+        display_page = DisplayPage(name="display_page")
 
         sm.add_widget(welcome_page)
         sm.add_widget(camera_page)
-        sm.current = "camera_page"
+        sm.add_widget(display_page)
+        sm.current = "display_page"
 
         return sm
 

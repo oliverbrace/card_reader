@@ -7,16 +7,16 @@ class WelcomePage(MDScreen):
         self.manager.transition.direction = "left"
         self.manager.current = "camera_page"
 
-    def go_to_cards_page(self, _):
+    def go_to_display_page(self, _):
         self.manager.transition.direction = "left"
-        self.manager.current = "cards_page"
+        self.manager.current = "display_page"
 
     def on_pre_enter(self):
         page_banner = PageBanner("Welcome Page")
 
-        go_to_cards_page_button = BoxButton(
+        go_to_display_page_button = BoxButton(
             CenteredLabel(text="Current Cards"),
-            # on_release=self.go_to_cards_page,
+            on_release=self.go_to_display_page,
         )
         go_to_camera_page_button = BoxButton(
             CenteredLabel(text="Add new Card"),
@@ -26,7 +26,7 @@ class WelcomePage(MDScreen):
         self.add_widget(page_banner)
 
         page_content = GapLayout(
-            [go_to_cards_page_button, go_to_camera_page_button],
+            [go_to_display_page_button, go_to_camera_page_button],
             offset=page_banner.height,
         )
 
