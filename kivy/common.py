@@ -2,6 +2,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.label import MDLabel
 from kivymd.uix.toolbar import MDTopAppBar
+from style import border_colour, fill_colour
 
 
 class PageBanner(MDTopAppBar):
@@ -31,7 +32,20 @@ class BoxButton(MDCard):
         self.size = ("200dp", "100dp")
         self.halign = "center"
         self.pos_hint = {"center_x": 0.5}
-        # self.size_hint_y = None
+        self.style = "outlined"
+        self.line_color = border_colour
+        self.md_bg_color = fill_colour
+        self.line_width = 2
+        # self.size_hint_y = None #023A80.
+
+
+class SmallContainer(MDBoxLayout):
+    """The Container will match the
+    size of the objects placed inside of it"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.adaptive_size = True
 
 
 class InvisibleCard(MDCard):
@@ -71,3 +85,10 @@ class GapLayout(MDBoxLayout):
         self.bind(size=update_gap_height)
 
         update_gap_height(self, self.size)
+
+
+class HelpBox(MDBoxLayout):
+    """Is a box layout that is white"""
+
+    def __init__(self, *args, **kwargs):
+        self.md_bg_color = [1, 1, 1, 1]

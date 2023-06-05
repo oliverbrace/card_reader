@@ -1,4 +1,5 @@
 from camera_page import CameraPage
+from card_verification_page import VerifyCardPage
 from display_page import DisplayPage
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
@@ -14,10 +15,12 @@ class App(MDApp):
         welcome_page = WelcomePage(name="welcome_page")
         camera_page = CameraPage(name="camera_page")
         display_page = DisplayPage(name="display_page")
+        verify_card_page = VerifyCardPage(name="verify_card_page")
 
         sm.add_widget(welcome_page)
         sm.add_widget(camera_page)
         sm.add_widget(display_page)
+        sm.add_widget(verify_card_page)
         sm.current = "display_page"
 
         return sm
