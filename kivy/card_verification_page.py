@@ -1,31 +1,23 @@
-import os
-
-from common import BoxButton, CenteredLabel, PageBanner, SmallContainer
-from kivymd.uix.anchorlayout import MDAnchorLayout
+from common import BoxButton, CenteredButtonsContainer, CenteredLabel, PageBanner
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.card import MDCard
-from kivymd.uix.fitimage.fitimage import FitImage
-from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.imagelist.imagelist import MDSmartTile
 from kivymd.uix.screen import MDScreen
 
-from kivy.uix.camera import Camera
 from kivy.uix.image import Image
 
 
 class VerifyCardPage(MDScreen):
     def go_to_card_details(self, _):
         self.manager.transition.direction = "left"
-        # self.manager.current = "new_card_page"
+        self.manager.current = "card_details_page"
 
     def go_to_camera_page(self):
         self.manager.transition.direction = "right"
         self.manager.current = "camera_page"
 
-    def card_correct(self):
+    def card_correct(self, _):
         self.go_to_card_details("")
 
-    def card_incorrect(self):
+    def card_incorrect(self, _):
         self.go_to_camera_page()
 
     def on_pre_enter(self):
@@ -53,15 +45,8 @@ class VerifyCardPage(MDScreen):
         page_content.add_widget(page_banner)
         page_content.add_widget(card_question_text)
         page_content.add_widget(card_image)
-        buttons_container = MDAnchorLayout(
-            anchor_x="center",
-            size_hint=(1, None),
-        )
-
-        small_container = SmallContainer(orientation="horizontal")
-        small_container.add_widget(card_correct_button)
-        small_container.add_widget(card_wrong_button)
-        buttons_container.add_widget(small_container)
-
+        buttons_container = CenteredButtonsContainer()
+        buttons_container.add_widget(card_correct_button)
+        buttons_container.add_widget(card_wrong_button)
         page_content.add_widget(buttons_container)
         self.add_widget(page_content)

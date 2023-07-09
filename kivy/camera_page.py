@@ -2,9 +2,8 @@ import os
 
 os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 
-from common import BoxButton, CenteredLabel, GapLayout, PageBanner
+from common import BoxButton, CenteredLabel, PageBanner
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.screen import MDScreen
 
 from kivy.uix.camera import Camera
@@ -22,9 +21,9 @@ class CameraPage(MDScreen):
             width=100,
         )
 
-    def go_to_process_card_page(self, _):
+    def go_to_process_card_page(self):
         self.manager.transition.direction = "left"
-        self.manager.current = "new_card_page"
+        self.manager.current = "verify_card_page"
 
     def go_to_welcome_page(self):
         self.manager.transition.direction = "right"
