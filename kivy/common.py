@@ -6,12 +6,13 @@ from kivymd.uix.label import MDLabel
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.textfield.textfield import MDTextField
 from kivymd.uix.toolbar import MDTopAppBar
+from kivymd.uix.widget import MDWidget
 from style import border_colour, fill_colour, selected_color
 
 
 class PageBanner(MDTopAppBar):
-    def __init__(self, title, previous_page=None):
-        super().__init__()
+    def __init__(self, title, previous_page=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         if previous_page:
             self.left_action_items = [["arrow-left", lambda x: previous_page()]]
 
@@ -31,7 +32,7 @@ class SmallLabel(CenteredLabel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.size_hint_y = None
-        self.height = "17dp"
+        self.height = 17
 
 
 class TopCenteredContainer(MDAnchorLayout):
@@ -41,8 +42,8 @@ class TopCenteredContainer(MDAnchorLayout):
         super().__init__(*args, **kwargs)
         self.pos_hint = {"center_x": 0.5}
         self.anchor_y = "top"
-        self.size_hint = (None, None)
-        self.size = ("200dp", "50dp")
+        self.size_hint_y = None
+        self.height = 50
 
 
 class BoxButton(MDCard):
@@ -76,6 +77,13 @@ class InvisibleCard(MDCard):
         self.opacity = 0
 
 
+class BlankSeparator(MDWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.size_hint_y = None
+        self.height = 50
+
+
 class GapLayout(MDBoxLayout):
     def __init__(self, widgets, offset=0, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -94,6 +102,10 @@ class GapLayout(MDBoxLayout):
             gap_height = available_height / (
                 len(widgets) + 1
             )  # Divide by the number of gaps (3 cards = 2 gaps)
+
+            if gap_height < 10:
+                gap_height = 10
+
             update_layout()
 
         def update_layout():
@@ -182,19 +194,21 @@ class TextWDropdown(MDBoxLayout):
     def __init__(self, text, options, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orientation = "vertical"
-        self.adaptive_height = True
-        self.spacing = 40
+        self.size_hint_y = None
+        # This height is actually 83 for some reason
+        # 100 gives a slight space above the object which is nice when its the first object
+        self.height = 100
 
         self.dropdown = None
 
-        centered_text = SmallLabel(text=text)
-        rarity_dropdown_button = MDDropDownItem(
-            pos_hint={"center_x": 0.5, "center_y": 0.5}
+        text_container = TopCenteredContainer(
+            SmallLabel(text=text),
         )
+        rarity_dropdown_button = MDDropDownItem(pos_hint={"center_x": 0.5})
         rarity_dropdown_button.text = "Common"
         rarity_dropdown_button.bind(on_release=self.show_dropdown)
 
-        self.add_widget(centered_text)
+        self.add_widget(text_container)
         self.add_widget(rarity_dropdown_button)
 
     def show_dropdown(self, dropdown_item):
@@ -224,16 +238,19 @@ class TextWTextField(MDBoxLayout):
     def __init__(self, text, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orientation = "vertical"
-        self.adaptive_height = True
-        self.spacing = 40
+        self.size_hint = (0.8, None)
+        self.height = 117
 
         self.pos_hint = {"center_x": 0.5}
-        self.size_hint = (0.8, 1)
 
-        centered_text = CenteredLabel(text=f"Notes", size_hint=(1, None))
-        notes_text = MDTextField(multiline=True)
+        text_container = TopCenteredContainer(
+            SmallLabel(text="Notes"),
+        )
 
-        self.add_widget(centered_text)
+        # Can't change size. Defaults to 100
+        notes_text = MDTextField()
+
+        self.add_widget(text_container)
         self.add_widget(notes_text)
 
 

@@ -1,25 +1,28 @@
 import os
 
-os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+if False:
+    os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
+    from kivy.uix.camera import Camera
 
 from common import BoxButton, CenteredLabel, PageBanner
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.screen import MDScreen
 
-from kivy.uix.camera import Camera
-
 
 class CameraPage(MDScreen):
     def __init__(self, **kwargs):
         super(CameraPage, self).__init__(**kwargs)
-        self.camera = Camera(
-            play=True,
-            size_hint=(1, 1),
-            keep_ratio=False,
-            allow_stretch=True,
-            height=100,
-            width=100,
-        )
+        if False:
+            self.camera = Camera(
+                play=True,
+                size_hint=(1, 1),
+                keep_ratio=False,
+                allow_stretch=True,
+                height=100,
+                width=100,
+            )
+        else:
+            self.camera = None
 
     def go_to_process_card_page(self):
         self.manager.transition.direction = "left"

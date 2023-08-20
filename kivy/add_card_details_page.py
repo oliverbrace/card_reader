@@ -1,24 +1,16 @@
 from common import (
+    BlankSeparator,
     BoxButton,
-    CenteredButtonsContainer,
     CenteredLabel,
-    GapLayout,
-    HelpBox,
     PageBanner,
     TextWButtons,
     TextWDropdown,
     TextWTextField,
 )
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.list import OneLineIconListItem
 from kivymd.uix.screen import MDScreen
+from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.textfield.textfield import MDTextField
-
-from kivy.properties import StringProperty
-
-
-class IconListItem(OneLineIconListItem):
-    icon = StringProperty()
 
 
 class CardDetailsPage(MDScreen):
@@ -53,7 +45,11 @@ class CardDetailsPage(MDScreen):
         return notes_container
 
     def on_pre_enter(self):
-        page_banner = PageBanner("Verify Card page", self.go_to_process_card_page)
+        layout = MDBoxLayout(orientation="vertical")
+
+        page_banner = PageBanner(
+            "Verify Card page", self.go_to_process_card_page, size_hint_y=None
+        )
 
         rarity_container = TextWDropdown("What is the rarity of your card?", options=[])
 
@@ -68,16 +64,24 @@ class CardDetailsPage(MDScreen):
             # on_release=self.done_button_action,
         )
 
-        self.add_widget(page_banner)
-        page_content = GapLayout(
-            [first_edition_container, damaged_container],
-            offset=page_banner.height,
-        )
+        layout.add_widget(page_banner)
+        scroll_view = MDScrollView()
 
-        # self.add_widget(rarity_container)
-        # self.add_widget(first_edition_container)
-        # self.add_widget(damaged_container)
-        # self.add_widget(notes_container)
-        # page_content.add_widget(done_button)
+        content = MDBoxLayout(orientation="vertical", size_hint_y=None)
 
-        self.add_widget(page_content)
+        content.add_widget(rarity_container)
+        content.add_widget(BlankSeparator())
+        content.add_widget(first_edition_container)
+        content.add_widget(BlankSeparator())
+        content.add_widget(damaged_container)
+        content.add_widget(BlankSeparator())
+        content.add_widget(notes_container)
+        content.add_widget(BlankSeparator())
+        content.add_widget(done_button)
+
+        content.height = sum(child.height for child in content.children)
+
+        scroll_view.add_widget(content)
+
+        layout.add_widget(scroll_view)
+        self.add_widget(layout)
