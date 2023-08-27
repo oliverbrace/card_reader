@@ -1,6 +1,6 @@
 import os
 
-if False:
+if True:
     os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
     from kivy.uix.camera import Camera
 
@@ -12,7 +12,7 @@ from kivymd.uix.screen import MDScreen
 class CameraPage(MDScreen):
     def __init__(self, **kwargs):
         super(CameraPage, self).__init__(**kwargs)
-        if False:
+        if True:
             self.camera = Camera(
                 play=True,
                 size_hint=(1, 1),
@@ -52,13 +52,15 @@ class CameraPage(MDScreen):
         page_content.add_widget(page_banner)
 
         # Remove the camera from its current parent
-        if self.camera.parent:
-            self.camera.parent.remove_widget(self.camera)
+        if self.camera:
+            if self.camera.parent:
+                self.camera.parent.remove_widget(self.camera)
 
-        self.camera.play = True
-        page_content.add_widget(self.camera)
+            self.camera.play = True
+            page_content.add_widget(self.camera)
         page_content.add_widget(go_to_process_card_page_button)
         self.add_widget(page_content)
 
     def on_leave(self):
-        self.camera.play = False
+        if self.camera:
+            self.camera.play = False
