@@ -1,8 +1,7 @@
 import cv2
 import numpy as np
-
-from image_functions.find_rectangles import get_contours
-from image_functions.image_check import get_image_size
+from backend.image_functions.find_rectangles import get_contours
+from backend.image_functions.image_check import get_image_size
 
 
 def draw_contours(image, contours):

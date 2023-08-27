@@ -1,12 +1,18 @@
 import logging
 import os
 
-from image_functions.draw_rectangles import draw_rectangle
-from image_functions.edge_detection import canny_edge_detection
-from image_functions.find_rectangles import find_biggest_rectangle, get_rectangles
-from image_functions.image_check import rectangle_shape_check
-from image_functions.serialize_image import ImageSerialize
-from image_functions.transform_image import crop_image, gray_add_colour_dimension
+from backend.image_functions.draw_rectangles import draw_rectangle
+from backend.image_functions.edge_detection import canny_edge_detection
+from backend.image_functions.find_rectangles import (
+    find_biggest_rectangle,
+    get_rectangles,
+)
+from backend.image_functions.image_check import rectangle_shape_check
+from backend.image_functions.serialize_image import ImageSerialize
+from backend.image_functions.transform_image import (
+    crop_image,
+    gray_add_colour_dimension,
+)
 
 
 class CardFinder(ImageSerialize):

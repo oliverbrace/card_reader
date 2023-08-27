@@ -2,23 +2,20 @@ import csv
 import os
 import re
 
-from card_settings import (
+from backend.card_settings import (
     text_h_percentage,
     text_s_h_percentage,
     text_s_w_percentage,
     text_w_percentage,
 )
-from image_functions.clean_image import closing, opening, sharpen
-from image_functions.edge_detection import canny_edge_detection
-from image_functions.serialize_image import ImageSerialize
-from image_functions.transform_image import (
+from backend.image_functions.serialize_image import ImageSerialize
+from backend.image_functions.transform_image import (
     create_grey,
     crop_image,
-    grey_to_bl,
     invert_black_white,
 )
-from logger import Logger
-from read_text import find_text_in_image
+from backend.logger import Logger
+from backend.read_text import find_text_in_image
 
 logger = Logger().load_logger()
 

@@ -2,8 +2,7 @@ import math
 
 import cv2
 import numpy as np
-
-from image_functions.image_check import get_image_size, num_channels_check
+from backend.image_functions.image_check import get_image_size, num_channels_check
 
 
 def invert_black_white(image):

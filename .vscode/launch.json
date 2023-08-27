@@ -8,7 +8,7 @@
       "name": "Python: run_kivy_app",
       "type": "python",
       "request": "launch",
-      "program": "kivy/app.py",
+      "program": "app/kivy_app.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },
@@ -16,7 +16,7 @@
       "name": "Python: run_kivy_example",
       "type": "python",
       "request": "launch",
-      "program": "kivy/kivy_example.py",
+      "program": "app/kivy_example.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },
@@ -24,7 +24,7 @@
       "name": "Python: text_extraction",
       "type": "python",
       "request": "launch",
-      "program": "text_extraction.py",
+      "program": "app/backend/text_extraction.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },
@@ -32,7 +32,7 @@
       "name": "Python: camera_feed",
       "type": "python",
       "request": "launch",
-      "program": "camera_feed.py",
+      "program": "app/backend/camera_feed.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },
@@ -40,7 +40,7 @@
       "name": "Python: card_finder",
       "type": "python",
       "request": "launch",
-      "program": "card_finder.py",
+      "program": "app/backend/card_finder.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },
@@ -48,7 +48,7 @@
       "name": "Python: card_data_append",
       "type": "python",
       "request": "launch",
-      "program": "add_info_db.py",
+      "program": "app/backend/add_info_db.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },
@@ -56,7 +56,7 @@
       "name": "Python: match_card",
       "type": "python",
       "request": "launch",
-      "program": "match_card.py",
+      "program": "app/backend/match_card.py",
       "console": "integratedTerminal",
       "justMyCode": true
     }

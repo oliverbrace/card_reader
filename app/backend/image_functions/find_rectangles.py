@@ -1,6 +1,5 @@
 import cv2
-
-from image_functions.transform_image import create_grey
+from backend.image_functions.transform_image import create_grey
 
 
 def get_contours(image):

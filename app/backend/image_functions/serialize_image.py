@@ -2,9 +2,8 @@ import logging
 import os
 
 import cv2
-
-from image_functions.get_image import read_saved_image
-from image_functions.image_check import get_image_size
+from backend.image_functions.get_image import read_saved_image
+from backend.image_functions.image_check import get_image_size
 
 
 class ImageSerialize:

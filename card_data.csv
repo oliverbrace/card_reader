@@ -1,3 +1,4 @@
 card_name, rarity, first_edition, damaged, average_card_price, highest_card_price, lowest_card_price
 Bait Doll,Common, False, False,1.33,5.49,0.59
 Great Phantom Thief, False, False,Common,1.26,5.49,1.08
+Fusion Weapon,Common,True,False,1.54,16.52,0.35

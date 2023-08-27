@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
-
-from card_settings import card_ratio
+from backend.card_settings import card_ratio
 
 
 def num_channels_check(img):

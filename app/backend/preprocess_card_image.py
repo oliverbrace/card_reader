@@ -1,11 +1,11 @@
 import logging
 import os
 
-from card_settings import card_ratio
-from image_functions.draw_rectangles import darken_outside_rectangle
-from image_functions.edge_detection import canny_edge_detection
-from image_functions.serialize_image import ImageSerialize
-from image_functions.transform_image import (
+from backend.card_settings import card_ratio
+from backend.image_functions.draw_rectangles import darken_outside_rectangle
+from backend.image_functions.edge_detection import canny_edge_detection
+from backend.image_functions.serialize_image import ImageSerialize
+from backend.image_functions.transform_image import (
     crop_image,
     gray_add_colour_dimension,
     paste_image,

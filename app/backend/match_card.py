@@ -3,10 +3,6 @@ import logging
 
 import pandas as pd
 
-print("hello world")
-print("Hello world")
-print("Hello, world")
-
 
 class MatchCard:
     """Use text from card to find most likely corresponding card"""
