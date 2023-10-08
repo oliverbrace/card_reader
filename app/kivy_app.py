@@ -1,9 +1,9 @@
 from add_card_details_page import CardDetailsPage
 from camera_page import CameraPage
-from card_verification_page import VerifyCardPage
 from display_page import DisplayPage
 from kivymd.app import MDApp
 from kivymd.uix.screenmanager import MDScreenManager
+from verify_card_page import VerifyCardPage
 from welcome_page import WelcomePage
 
 
