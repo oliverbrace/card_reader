@@ -3,15 +3,8 @@ from kivymd.uix.screen import MDScreen
 
 
 class WelcomePage(MDScreen):
-    def go_to_camera_page(self, _):
-        self.manager.transition.direction = "left"
-        self.manager.current = "camera_page"
-
-    def go_to_display_page(self, _):
-        self.manager.transition.direction = "left"
-        self.manager.current = "display_page"
-
-    def on_pre_enter(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         page_banner = PageBanner("Welcome Page")
 
         go_to_display_page_button = BoxButton(
@@ -31,3 +24,11 @@ class WelcomePage(MDScreen):
         )
 
         self.add_widget(page_content)
+
+    def go_to_camera_page(self, _):
+        self.manager.transition.direction = "left"
+        self.manager.current = "camera_page"
+
+    def go_to_display_page(self, _):
+        self.manager.transition.direction = "left"
+        self.manager.current = "display_page"

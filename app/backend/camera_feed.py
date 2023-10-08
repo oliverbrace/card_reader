@@ -54,16 +54,16 @@ def preprocess_frame(frame):
     return image_preprocessing
 
 
-def find_card_in_frame(image_preprocessing):
+def find_card_in_frame(image):
     card_reader = CardFinder()
-    card_reader.load_image(image_preprocessing.center_image)
+    card_reader.load_image(image)
     card_reader()
-    return card_reader
+    return card_reader.card_image
 
 
-def extract_text_from_card(card_reader):
+def extract_text_from_card(card_image):
     textE = TextExtraction()
-    textE.load_image(card_reader.card_image)
+    textE.load_image(card_image)
     textE()
     return textE.text
 
@@ -92,15 +92,15 @@ def camera_feed():
         original_frame = get_frame_from_camera(cap)
         image_preprocessing = preprocess_frame(original_frame)
 
-        card_reader = find_card_in_frame(image_preprocessing)
-        if card_reader.found_card_image is None:
+        found_card_image = find_card_in_frame(image_preprocessing)
+        if found_card_image is None:
             cv2.imshow("Input", image_preprocessing.display_image)
             continue
 
-        image_preprocessing.add_new_center_image(card_reader.found_card_image)
+        image_preprocessing.add_new_center_image(found_card_image)
         cv2.imshow("Input", image_preprocessing.display_image)
 
-        text = extract_text_from_card(card_reader)
+        text = extract_text_from_card(found_card_image)
         if not text:
             # logger.warning("No text found")
             continue
@@ -126,3 +126,30 @@ def camera_feed():
 
 
 # camera_feed()
+
+
+def image_search(image, attempted_cards):
+    """Preprocess and checks image for card
+
+    Args:
+        image (_type_): cv2 image to process
+        attempted_cards (list): list of cards already attempted
+
+    Returns:
+        Optional[str]: Name of matched card
+    """
+
+    image_preprocessing = preprocess_frame(image)
+    found_card_image = find_card_in_frame(image_preprocessing.center_image)
+    if found_card_image is None:
+        return None
+
+    text = extract_text_from_card(found_card_image)
+    if not text:
+        return None
+
+    matched_card_name = match_card_from_text(text)
+    if not matched_card_name or matched_card_name in attempted_cards:
+        return None
+
+    return {"name": matched_card_name, "image": found_card_image}
