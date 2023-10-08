@@ -20,7 +20,7 @@ class ImageSerialize:
     def load_image(self, image):
         self.original_image = image
         self.image_height, self.image_width = get_image_size(self.original_image)
-        logging.info("Loaded image")
+        # logging.info("Loaded image")
 
     def output_image(
         self, image, file_name="test_image", path="images/extracted_cards"
