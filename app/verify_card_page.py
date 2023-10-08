@@ -1,4 +1,5 @@
 import cv2
+from backend.image_functions.serialize_image import ImageSerialize
 from common import BoxButton, CenteredButtonsContainer, CenteredLabel, PageBanner
 from kivy.graphics.texture import Texture
 from kivy.uix.image import Image
@@ -50,10 +51,16 @@ class VerifyCardPage(MDScreen):
         self.go_to_camera_page()
 
     def on_pre_enter(self):
-        if not hasattr(self.manager, "current_card"):
-            card = {"name": "test", "image": Image(source="test_display_image.png")}
-
-        card = self.manager.current_card
+        if hasattr(self.manager, "current_card"):
+            card = self.manager.current_card
+        else:
+            # Test mode
+            test_IS = ImageSerialize()
+            test_IS.load_file_image("test_display_image.png", path="app")
+            card = {
+                "name": "test",
+                "image": test_IS.original_image,
+            }
 
         # Update the card name directly
         self.card_question_text.text = f"Is the card called {card['name']}"

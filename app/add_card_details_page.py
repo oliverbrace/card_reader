@@ -76,5 +76,7 @@ class CardDetailsPage(MDScreen):
         return notes_container
 
     def on_pre_enter(self):
-        # self.set_item("Common")
-        pass
+        self.rarity_container.set_item("Common")
+        self.first_edition_container.reset_buttons()
+        self.damaged_container.reset_buttons()
+        self.notes_container.clear_text()

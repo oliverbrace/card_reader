@@ -189,6 +189,11 @@ class TextWButtons(MDBoxLayout):
         self.children[0].children[0].md_bg_color = selected_color
         self.answer = False
 
+    def reset_buttons(self):
+        self.children[0].children[1].md_bg_color = fill_colour
+        self.children[0].children[0].md_bg_color = fill_colour
+        self.answer = None
+
 
 class TextWDropdown(MDBoxLayout):
     def __init__(self, text, options, *args, **kwargs):
@@ -218,7 +223,7 @@ class TextWDropdown(MDBoxLayout):
                     "viewclass": "OneLineListItem",
                     "text": f"Item {i}",
                     "height": 54,
-                    "on_release": lambda x=f"Item {i}": self.dropdown_item_selected(x),
+                    "on_release": lambda x=f"Item {i}": self.dropdown_item_clicked(x),
                 }
                 for i in range(1, 4)
             ]
@@ -229,8 +234,11 @@ class TextWDropdown(MDBoxLayout):
             )
         self.dropdown.open()
 
-    def dropdown_item_selected(self, x):
+    def set_item(self, x):
         self.children[0].set_item(x)
+
+    def dropdown_item_clicked(self, x):
+        self.set_item(x)
         self.dropdown.dismiss()
 
 
@@ -248,10 +256,13 @@ class TextWTextField(MDBoxLayout):
         )
 
         # Can't change size. Defaults to 100
-        notes_text = MDTextField()
+        self.notes_text = MDTextField()
 
         self.add_widget(text_container)
-        self.add_widget(notes_text)
+        self.add_widget(self.notes_text)
+
+    def clear_text(self):
+        self.children[0].text = ""
 
 
 class TwoButtons(CenteredButtonsContainer):
