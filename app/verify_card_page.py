@@ -1,8 +1,9 @@
+import cv2
 from common import BoxButton, CenteredButtonsContainer, CenteredLabel, PageBanner
+from kivy.graphics.texture import Texture
+from kivy.uix.image import Image
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.screen import MDScreen
-
-from kivy.uix.image import Image
 
 
 class VerifyCardPage(MDScreen):
@@ -31,11 +32,13 @@ class VerifyCardPage(MDScreen):
             on_release=self.card_incorrect,
         )
 
-        card_name = "YOUR MOTHER"
+        card = self.manager.current_card
+
+        card_name = card.name
         card_question_text = CenteredLabel(
             text=f"Is the card called {card_name}", size_hint=(1, None)
         )
-        card_image = Image(source="test_display_image.png")
+        card_image = Image(texture=self.create_texture_from_frame(card.image))
 
         # Set the image size to fill the parent widget
         card_image.allow_stretch = True
@@ -50,3 +53,11 @@ class VerifyCardPage(MDScreen):
         buttons_container.add_widget(card_wrong_button)
         page_content.add_widget(buttons_container)
         self.add_widget(page_content)
+
+    @staticmethod
+    def create_texture_from_frame(frame):
+        """Create a Kivy texture from an RGB frame."""
+        frame = cv2.flip(frame, 0)
+        texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt="rgb")
+        texture.blit_buffer(frame.tobytes(), colorfmt="rgb", bufferfmt="ubyte")
+        return texture
