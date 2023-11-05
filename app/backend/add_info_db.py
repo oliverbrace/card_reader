@@ -7,67 +7,54 @@ import requests
 
 
 class CardRegisterAdder:
-    def __init__(self, card_name):
+    def __init__(
+        self,
+        card_name=None,
+        rarity="Common",
+        print_tag=None,
+        first_edition=None,
+        damaged=None,
+        notes="",
+    ):
         self.card_name = card_name
-        self.card_info = None
-        self.highest_card_price = None
-        self.lowest_card_price = None
-        self.average_card_price = None
-        self.first_edition = None
-        self.damaged = None
+        self.rarity = rarity
+        self.print_tag = print_tag
+        self.first_edition = first_edition
+        self.damaged = damaged
+        self.notes = notes
 
-    @staticmethod
-    def damaged_q():
-        while True:
-            response = input("Is card damaged (Y/N)").upper()
+        self._card_info = None
+        self._card_prices = None
+        self._possible_rarities = None
+        self._possible_print_tags = None
 
-            # Check is number
-            if response == "Y":
-                return True
-            elif response == "N":
-                return False
-            else:
-                print("Please put either Y or N")
+    @property
+    def card_info(self):
+        if self._card_info is None:
+            self._card_info = self.get_card_info()
 
-    @staticmethod
-    def first_edition_q():
-        while True:
-            response = input("Is card first edition (Y/N)").upper()
+        return self._card_info
 
-            # Check is number
-            if response == "Y":
-                return True
-            elif response == "N":
-                return False
-            else:
-                print("Please put either Y or N")
+    @property
+    def card_prices(self):
+        if self._card_prices is None:
+            self._card_prices = self.get_card_prices()
 
-    @staticmethod
-    def pick_rarity(item_list):
-        rarity_dict = {0: "Not in list"}
-        user_query = "Pick the item you want: \n0. Not in list\n"
-        for i, card_name in enumerate(item_list):
-            rarity_dict[i + 1] = card_name
-            user_query += f"{i + 1}. {card_name}\n"
+        return self._card_prices
 
-        while True:
-            response = input(user_query)
+    @property
+    def possible_rarities(self):
+        if self._possible_rarities is None:
+            self._possible_rarities = self.get_rarities()
 
-            # Check is number
-            if response.isdigit():
-                response = int(response)
-            else:
-                print("Please enter a valid number.")
-                continue
+        return self._possible_rarities
 
-            # Check if valid number
-            if response >= 0 and response <= len(item_list):
-                rarity = rarity_dict[response]
-                break
-            else:
-                print("Please enter a valid number.")
+    @property
+    def possible_print_tags(self):
+        if self._possible_print_tags is None:
+            self._possible_print_tags = self.get_print_tags()
 
-        return rarity
+        return self._possible_print_tags
 
     def get_card_info(self):
         card_name = self.card_name
@@ -76,70 +63,142 @@ class CardRegisterAdder:
         )
 
         if card_info.json()["status"] == "success":
-            self.card_info = card_info.json()
+            return card_info.json()["data"]
         else:
             raise Exception("Card name not found")
 
-    def filter_card_info(self):
-        card_data = self.card_info["data"]
-        # Ask rarity
-        rarity_list = {card["rarity"] for card in card_data}
+    def get_rarities(self):
+        return list({card["rarity"] for card in self.card_info})
 
-        if len(rarity_list) == 1:
-            self.rarity = rarity_list[0]
-        else:
-            self.rarity = self.pick_rarity(rarity_list)
+    def get_print_tags(self):
+        return list({card["print_tag"] for card in self.card_info})
 
-        # Get rarity
-        card_data = list(
+    def card_match_r_pt(self):
+        """Rarity and print tag search
+
+        Returns:
+            _type_: _description_
+        """
+        return list(
             filter(
                 lambda card: card["price_data"]["status"] == "success"
-                and card["rarity"] == self.rarity,
-                card_data,
+                and card["rarity"] == self.rarity
+                and card["print_tag"] == self.print_tag,
+                self.card_info,
             )
         )
 
-        if len(card_data) == 0:
-            # Card has never been sold. Can use most expensive
+    def card_match_r(self):
+        """Rarity search
+
+        Returns:
+            _type_: _description_
+        """
+        return list(
+            filter(
+                lambda card: card["price_data"]["status"] == "success"
+                and card["rarity"] == self.rarity,
+                self.card_info,
+            )
+        )
+
+    def card_match_pt(self):
+        """Print tag search
+
+        Returns:
+            _type_: _description_
+        """
+        return list(
+            filter(
+                lambda card: card["price_data"]["status"] == "success"
+                and card["print_tag"] == self.print_tag,
+                self.card_info,
+            )
+        )
+
+    @staticmethod
+    def card_price_range_calc(cards_data):
+        """If multiple matches calculate range
+
+        Args:
+            cards_data (list): All price data of cards matched
+        """
+        price_data = [card["price_data"]["data"]["prices"] for card in cards_data]
+
+        price_high = [card["high"] for card in price_data]
+        highest_high = max(price_high)
+        lowest_high = min(price_high)
+
+        price_average = [card["average"] for card in price_data]
+        highest_average = max(price_average)
+        lowest_average = min(price_average)
+
+        price_low = [card["low"] for card in price_data]
+        highest_low = max(price_low)
+        lowest_low = min(price_low)
+
+        card_price_range = {
+            "high": f"£{lowest_high}-£{highest_high}",
+            "average": f"£{lowest_average}-£{highest_average}",
+            "low": f"£{lowest_low}-£{highest_low}",
+        }
+
+        return card_price_range
+
+    def get_card_prices(self):
+        # ? This search may need to change depending on what
+        # ? Is more important rarity or print tag
+        card_data = self.card_match_r_pt()
+
+        if card_data == []:
+            card_data = self.card_match_r()
+
+        if card_data == []:
+            card_data = self.card_match_pt()
+
+        if card_data == []:
+            # Card has never been sold
             logging.warning("No price info found")
             self.highest_card_price = float("nan")
-            self.lowest_card_price = float("nan")
             self.average_card_price = float("nan")
+            self.lowest_card_price = float("nan")
+            return
 
-        price_data = [card["price_data"]["data"]["prices"] for card in card_data]
-        high_values = [card["high"] for card in price_data]
-        self.highest_card_price = max(high_values)
+        if len(card_data) == 1:
+            # One match found
+            card_prices = card_data[0]["price_data"]["data"]["prices"]
+            self.highest_card_price = f"£{card_prices['high']}"
+            self.average_card_price = f"£{card_prices['average']}"
+            self.lowest_card_price = f"£{card_prices['low']}"
+            return
 
-        average_values = [card["average"] for card in price_data]
-        self.average_card_price = max(average_values)
-
-        low_values = [card["low"] for card in price_data]
-        self.lowest_card_price = max(low_values)
+        # Multiple matches found
+        card_prices = self.card_price_range_calc(card_data)
+        self.highest_card_price = card_prices["high"]
+        self.average_card_price = card_prices["average"]
+        self.lowest_card_price = card_prices["low"]
+        return
 
     def write_card_to_csv(self):
-        with open("card_data.csv", "a", newline="") as f:
+        with open("card_data.csv", "a", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(
                 [
                     self.card_name,
                     self.rarity,
+                    self.print_tag,
                     self.first_edition,
                     self.damaged,
                     self.average_card_price,
                     self.highest_card_price,
                     self.lowest_card_price,
+                    self.notes,
                 ]
             )
 
     def __call__(self):
-        if self.card_name is None:
-            raise Exception("No card name provided")
-
-        self.get_card_info()
         self.filter_card_info()
 
-        self.first_edition = self.first_edition_q()
-        self.damaged = self.damaged_q()
         self.write_card_to_csv()
 
 

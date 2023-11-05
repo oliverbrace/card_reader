@@ -1,4 +1,5 @@
-card_name, rarity, first_edition, damaged, average_card_price, highest_card_price, lowest_card_price
-Bait Doll,Common, False, False,1.33,5.49,0.59
-Great Phantom Thief, False, False,Common,1.26,5.49,1.08
-Fusion Weapon,Common,True,False,1.54,16.52,0.35
+card_name, rarity, print_tag, first_edition, damaged, average_card_price, highest_card_price, lowest_card_price, notes
+Guardian Kay'est,Common,DR1-EN171,False,False,£0.42,£0.35,£0.35,
+Battle-Scarred,Common,DR1-EN259,False,False,£2.13,£4.23,£0.25,
+Dian Keto the Cure Master,Common,SDY-023,False,True,£1.43-£9.76,£5.29-£12.77,£0.35-£6.19,
+Battle Footballer,Common,DR1-EN163,False,False,£0.35,£0.35,£0.35,Its a very nice card

@@ -7,7 +7,13 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.textfield.textfield import MDTextField
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.widget import MDWidget
-from style import border_colour, fill_colour, selected_color
+from style import (
+    border_colour,
+    disabled_border_colour,
+    disabled_fill_colour,
+    fill_colour,
+    selected_color,
+)
 
 
 class PageBanner(MDTopAppBar):
@@ -49,16 +55,17 @@ class TopCenteredContainer(MDAnchorLayout):
 class BoxButton(MDCard):
     """Button to click on that can take other objects"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, disabled=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.size_hint = (None, None)
         self.size = ("200dp", "100dp")
         self.halign = "center"
         self.pos_hint = {"center_x": 0.5}
         self.style = "outlined"
+        self.line_width = 2
+        self.disabled = disabled
         self.line_color = border_colour
         self.md_bg_color = fill_colour
-        self.line_width = 2
 
 
 class SmallContainer(MDBoxLayout):
@@ -155,11 +162,12 @@ class HelpBox(MDBoxLayout):
 
 
 class TextWButtons(MDBoxLayout):
-    def __init__(self, text, *args, **kwargs):
+    def __init__(self, text, on_release=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orientation = "vertical"
         self.size_hint = (1, None)
         self.height = 150
+        self.on_release = on_release
 
         self.answer = None
 
@@ -183,11 +191,13 @@ class TextWButtons(MDBoxLayout):
         self.children[0].children[1].md_bg_color = selected_color
         self.children[0].children[0].md_bg_color = fill_colour
         self.answer = True
+        self.on_release()
 
     def clicked_no(self, _):
         self.children[0].children[1].md_bg_color = fill_colour
         self.children[0].children[0].md_bg_color = selected_color
         self.answer = False
+        self.on_release()
 
     def reset_buttons(self):
         self.children[0].children[1].md_bg_color = fill_colour
@@ -196,7 +206,7 @@ class TextWButtons(MDBoxLayout):
 
 
 class TextWDropdown(MDBoxLayout):
-    def __init__(self, text, options, *args, **kwargs):
+    def __init__(self, text, default, on_release, options=[], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orientation = "vertical"
         self.size_hint_y = None
@@ -204,13 +214,14 @@ class TextWDropdown(MDBoxLayout):
         # 100 gives a slight space above the object which is nice when its the first object
         self.height = 100
 
+        self.options = options
         self.dropdown = None
+        self.on_release = on_release
 
         text_container = TopCenteredContainer(
             SmallLabel(text=text),
         )
         rarity_dropdown_button = MDDropDownItem(pos_hint={"center_x": 0.5})
-        rarity_dropdown_button.text = "Common"
         rarity_dropdown_button.bind(on_release=self.show_dropdown)
 
         self.add_widget(text_container)
@@ -221,11 +232,11 @@ class TextWDropdown(MDBoxLayout):
             dropdown_items = [
                 {
                     "viewclass": "OneLineListItem",
-                    "text": f"Item {i}",
+                    "text": rarity,
                     "height": 54,
-                    "on_release": lambda x=f"Item {i}": self.dropdown_item_clicked(x),
+                    "on_release": lambda x=rarity: self.dropdown_item_clicked(x),
                 }
-                for i in range(1, 4)
+                for rarity in self.options
             ]
             self.dropdown = MDDropdownMenu(
                 caller=dropdown_item,
@@ -240,6 +251,7 @@ class TextWDropdown(MDBoxLayout):
     def dropdown_item_clicked(self, x):
         self.set_item(x)
         self.dropdown.dismiss()
+        self.on_release()
 
 
 class TextWTextField(MDBoxLayout):
@@ -256,13 +268,13 @@ class TextWTextField(MDBoxLayout):
         )
 
         # Can't change size. Defaults to 100
-        self.notes_text = MDTextField()
+        self.notes_text_container = MDTextField()
 
         self.add_widget(text_container)
-        self.add_widget(self.notes_text)
+        self.add_widget(self.notes_text_container)
 
     def clear_text(self):
-        self.children[0].text = ""
+        self.notes_text_container.text = ""
 
 
 class TwoButtons(CenteredButtonsContainer):

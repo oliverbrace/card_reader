@@ -1,41 +1,45 @@
 import pandas as pd
-from common import BoxButton, CenteredLabel, PageBanner
+from common import PageBanner
+from kivy.metrics import dp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.screen import MDScreen
 from style import table_colour
 
-from kivy.metrics import dp
-
 
 class DisplayPage(MDScreen):
-    def go_to_welcome_page(self):
-        self.manager.transition.direction = "right"
-        self.manager.current = "welcome_page"
-
-    def on_pre_enter(self):
-        page_banner = PageBanner("Display Page", self.go_to_welcome_page)
-        pd_cards = pd.read_csv("card_data.csv")
-        cards = list(pd_cards.itertuples(index=False, name=None))
-        data_tables = MDDataTable(
+    def __init__(self, **kwargs):
+        super(DisplayPage, self).__init__(**kwargs)
+        self.page_banner = PageBanner("Display Page", self.go_to_welcome_page)
+        self.data_tables = MDDataTable(
             background_color_selected_cell=table_colour,
             check=True,
             column_data=[
                 ("Name", dp(40), self.sort_on_col_1),
                 ("Rarity", dp(30), self.sort_on_col_2),
-                ("1st Ed.", dp(50), self.sort_on_col_3),
-                ("Damaged", dp(30), self.sort_on_col_4),
-                ("Avg Price", dp(30), self.sort_on_col_5),
-                ("Max Price", dp(30), self.sort_on_col_6),
-                ("Min Price", dp(30), self.sort_on_col_7),
+                ("print_tag", dp(30)),
+                ("1st Ed.", dp(30), self.sort_on_col_3),
+                ("Dmged", dp(30), self.sort_on_col_4),
+                ("Avg Price", dp(25), self.sort_on_col_5),
+                ("Max Price", dp(25), self.sort_on_col_6),
+                ("Min Price", dp(25), self.sort_on_col_7),
+                ("Notes", dp(60)),
             ],
-            row_data=cards,
         )
-        data_tables.bind(on_row_press=self.on_row_press)
+
         page_content = MDBoxLayout(orientation="vertical")
-        page_content.add_widget(page_banner)
-        page_content.add_widget(data_tables)
+        page_content.add_widget(self.page_banner)
+        page_content.add_widget(self.data_tables)
         self.add_widget(page_content)
+
+    def go_to_welcome_page(self):
+        self.manager.transition.direction = "right"
+        self.manager.current = "welcome_page"
+
+    def on_pre_enter(self):
+        pd_cards = pd.read_csv("card_data.csv").fillna("")
+        cards = list(pd_cards.itertuples(index=False, name=None))
+        self.data_tables.row_data = cards  # Populate the MDDataTable
 
     def sort_on_col_1(self, data):
         return zip(*sorted(enumerate(data), key=lambda l: l[1][1]))
