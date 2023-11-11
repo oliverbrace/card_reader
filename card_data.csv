@@ -1,5 +1,3 @@
-card_name, rarity, print_tag, first_edition, damaged, average_card_price, highest_card_price, lowest_card_price, notes
-Guardian Kay'est,Common,DR1-EN171,False,False,£0.42,£0.35,£0.35,
-Battle-Scarred,Common,DR1-EN259,False,False,£2.13,£4.23,£0.25,
-Dian Keto the Cure Master,Common,SDY-023,False,True,£1.43-£9.76,£5.29-£12.77,£0.35-£6.19,
-Battle Footballer,Common,DR1-EN163,False,False,£0.35,£0.35,£0.35,Its a very nice card
+card_name, rarity, print_tag, first_edition, damaged, lowest_card_price, average_card_price, highest_card_price, notes
+
+Fusion Weapon,Short Print,SGX1-ENI16,False,True,£0.83,£2.35,£11.52,grdgdffdggfd

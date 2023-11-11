@@ -20,9 +20,9 @@ class DisplayPage(MDScreen):
                 ("print_tag", dp(30)),
                 ("1st Ed.", dp(30), self.sort_on_col_3),
                 ("Dmged", dp(30), self.sort_on_col_4),
-                ("Avg Price", dp(25), self.sort_on_col_5),
-                ("Max Price", dp(25), self.sort_on_col_6),
-                ("Min Price", dp(25), self.sort_on_col_7),
+                ("Min Price", dp(25), self.sort_on_col_5),
+                ("Avg Price", dp(25), self.sort_on_col_6),
+                ("Max Price", dp(25), self.sort_on_col_7),
                 ("Notes", dp(60)),
             ],
         )

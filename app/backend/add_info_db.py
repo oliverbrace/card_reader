@@ -22,6 +22,7 @@ class CardRegisterAdder:
         self.first_edition = first_edition
         self.damaged = damaged
         self.notes = notes
+        self.match_type = None
 
         self._card_info = None
         self._card_prices = None
@@ -79,7 +80,7 @@ class CardRegisterAdder:
         Returns:
             _type_: _description_
         """
-        return list(
+        matches = list(
             filter(
                 lambda card: card["price_data"]["status"] == "success"
                 and card["rarity"] == self.rarity
@@ -87,6 +88,10 @@ class CardRegisterAdder:
                 self.card_info,
             )
         )
+        if matches != []:
+            self.match_type = "R/PT"
+
+        return matches
 
     def card_match_r(self):
         """Rarity search
@@ -94,7 +99,7 @@ class CardRegisterAdder:
         Returns:
             _type_: _description_
         """
-        return list(
+        matches = list(
             filter(
                 lambda card: card["price_data"]["status"] == "success"
                 and card["rarity"] == self.rarity,
@@ -102,19 +107,29 @@ class CardRegisterAdder:
             )
         )
 
+        if matches != []:
+            self.match_type = "R"
+
+        return matches
+
     def card_match_pt(self):
         """Print tag search
 
         Returns:
             _type_: _description_
         """
-        return list(
+        matches = list(
             filter(
                 lambda card: card["price_data"]["status"] == "success"
                 and card["print_tag"] == self.print_tag,
                 self.card_info,
             )
         )
+
+        if matches != []:
+            self.match_type = "PT"
+
+        return matches
 
     @staticmethod
     def card_price_range_calc(cards_data):
@@ -159,9 +174,10 @@ class CardRegisterAdder:
         if card_data == []:
             # Card has never been sold
             logging.warning("No price info found")
-            self.highest_card_price = float("nan")
-            self.average_card_price = float("nan")
-            self.lowest_card_price = float("nan")
+            self.highest_card_price = float("-")
+            self.average_card_price = float("-")
+            self.lowest_card_price = float("-")
+            self.match_type = "None"
             return
 
         if len(card_data) == 1:
@@ -189,9 +205,9 @@ class CardRegisterAdder:
                     self.print_tag,
                     self.first_edition,
                     self.damaged,
+                    self.lowest_card_price,
                     self.average_card_price,
                     self.highest_card_price,
-                    self.lowest_card_price,
                     self.notes,
                 ]
             )
