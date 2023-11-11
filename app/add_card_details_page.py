@@ -28,12 +28,12 @@ class CardDetailsPage(MDScreen):
             "Verify Card page", self.go_to_process_card_page, size_hint_y=None
         )
 
-        scroll_view = MDScrollView()
+        self.scroll_view = MDScrollView()
         content = MDBoxLayout(orientation="vertical", size_hint_y=None)
 
         layout.add_widget(page_banner)
-        layout.add_widget(scroll_view)
-        scroll_view.add_widget(content)
+        layout.add_widget(self.scroll_view)
+        self.scroll_view.add_widget(content)
 
         self.create_widgets()
 
@@ -122,7 +122,6 @@ class CardDetailsPage(MDScreen):
         self.rarity_container.options = rarity_options
         self.print_tag_container.options = print_tag_options
 
-        #! Should a method in it to reset
         self.rarity_container.dropdown = None
         self.print_tag_container.dropdown = None
 
@@ -130,9 +129,11 @@ class CardDetailsPage(MDScreen):
         self.first_edition_selected = False
         self.rarity_container.set_item("Common")
         self.print_tag_container.set_item("Not provided")
+        self.price_table.row_data = [("-", "-", "-", "-")]
         self.first_edition_container.reset_buttons()
         self.damaged_container.reset_buttons()
         self.notes_container.clear_text()
+        self.scroll_view.scroll_to(self.rarity_container, animate=False)
 
     def update_price_display(self):
         if self.print_tag_container.children[0].current_item == "Not provided":
