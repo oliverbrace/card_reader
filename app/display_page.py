@@ -1,4 +1,5 @@
 import pandas as pd
+from backend.misc import open_with_default_app
 from common import PageBanner
 from kivy.metrics import dp
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -10,7 +11,9 @@ from style import table_colour
 class DisplayPage(MDScreen):
     def __init__(self, **kwargs):
         super(DisplayPage, self).__init__(**kwargs)
-        self.page_banner = PageBanner("Display Page", self.go_to_welcome_page)
+        self.page_banner = PageBanner(
+            "Display Page", self.go_to_welcome_page, self.download_file
+        )
         self.summary_table = MDDataTable(
             background_color_selected_cell=table_colour,
             check=False,
@@ -159,7 +162,11 @@ class DisplayPage(MDScreen):
         data = self.table_format(pd_data)
         return [tuple(new_index), tuple(data)]
 
+    def download_file(self):
+        open_with_default_app("card_data.csv")
+
     def on_row_press(self, instance_table, instance_row):
         """Called when a table row is clicked."""
 
+        print(instance_table, instance_row)
         print(instance_table, instance_row)

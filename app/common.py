@@ -17,10 +17,13 @@ from style import (
 
 
 class PageBanner(MDTopAppBar):
-    def __init__(self, title, previous_page=None, *args, **kwargs):
+    def __init__(self, title, previous_page=None, download_list=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if previous_page:
             self.left_action_items = [["arrow-left", lambda x: previous_page()]]
+
+        if download_list:
+            self.right_action_items = [["file-download", lambda x: download_list()]]
 
         self.title = title
         self.elevation = 4
