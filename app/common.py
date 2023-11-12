@@ -17,18 +17,43 @@ from style import (
 
 
 class PageBanner(MDTopAppBar):
-    def __init__(self, title, previous_page=None, download_list=None, *args, **kwargs):
+    def __init__(
+        self,
+        title,
+        previous_page=None,
+        download_list=None,
+        delete_items=None,
+        *args,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
         if previous_page:
             self.left_action_items = [["arrow-left", lambda x: previous_page()]]
 
+        self.right_action_items_stored = []
         if download_list:
-            self.right_action_items = [["file-download", lambda x: download_list()]]
+            self.right_action_items_stored.append(
+                ["file-download", lambda x: download_list()]
+            )
+
+        if delete_items:
+            self.right_action_items_stored.append(
+                ["delete-forever", lambda x: delete_items()]
+            )
+
+        if self.right_action_items_stored != []:
+            self.right_action_items = self.right_action_items_stored
 
         self.title = title
         self.elevation = 4
         self.pos_hint = {"top": 1}
         self.height = 64
+
+    def hide_delete(self):
+        self.right_action_items = [self.right_action_items_stored[0]]
+
+    def show_delete(self):
+        self.right_action_items = self.right_action_items_stored
 
 
 class CenteredLabel(MDLabel):

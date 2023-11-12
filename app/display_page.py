@@ -12,7 +12,10 @@ class DisplayPage(MDScreen):
     def __init__(self, **kwargs):
         super(DisplayPage, self).__init__(**kwargs)
         self.page_banner = PageBanner(
-            "Display Page", self.go_to_welcome_page, self.download_file
+            "Display Page",
+            self.go_to_welcome_page,
+            self.download_file,
+            self.delete_select_rows,
         )
         self.summary_table = MDDataTable(
             background_color_selected_cell=table_colour,
@@ -29,7 +32,7 @@ class DisplayPage(MDScreen):
             ],
         )
 
-        self.data_tables = MDDataTable(
+        self.data_table = MDDataTable(
             background_color_selected_cell=table_colour,
             check=True,
             use_pagination=True,
@@ -47,11 +50,12 @@ class DisplayPage(MDScreen):
                 ("Notes", dp(60)),
             ],
         )
+        self.data_table.bind(on_check_press=self.check_button_pressed)
 
         page_content = MDBoxLayout(orientation="vertical")
         page_content.add_widget(self.page_banner)
         page_content.add_widget(self.summary_table)
-        page_content.add_widget(self.data_tables)
+        page_content.add_widget(self.data_table)
         self.add_widget(page_content)
 
     def go_to_welcome_page(self):
@@ -105,7 +109,8 @@ class DisplayPage(MDScreen):
     def on_pre_enter(self):
         pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
         cards = self.table_format(pd_cards)
-        self.data_tables.row_data = cards  # Populate the MDDataTable
+        self.data_table.row_data = cards  # Populate the MDDataTable
+        self.delete_icon_check(self.data_table)
         if len(cards) == 0:
             self.summary_table.row_data = [("-", "-", "-", "-", "-", "-")]
         else:
@@ -169,4 +174,15 @@ class DisplayPage(MDScreen):
         """Called when a table row is clicked."""
 
         print(instance_table, instance_row)
-        print(instance_table, instance_row)
+
+    def delete_select_rows(self):
+        self.data_table.get_row_checks()
+
+    def check_button_pressed(self, instance_table, current_row):
+        self.delete_icon_check(instance_table)
+
+    def delete_icon_check(self, table):
+        if table.get_row_checks() == []:
+            self.page_banner.hide_delete()
+        else:
+            self.page_banner.show_delete()
