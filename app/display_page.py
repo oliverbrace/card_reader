@@ -11,6 +11,8 @@ from style import table_colour
 class DisplayPage(MDScreen):
     def __init__(self, **kwargs):
         super(DisplayPage, self).__init__(**kwargs)
+        self.checked_rows = []
+        self.deleting = False
         self.page_banner = PageBanner(
             "Display Page",
             self.go_to_welcome_page,
@@ -62,6 +64,27 @@ class DisplayPage(MDScreen):
         self.manager.transition.direction = "right"
         self.manager.current = "welcome_page"
 
+    def update_data_table(self):
+        pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
+        cards = self.table_format(pd_cards)
+        self.data_table.row_data = cards  # Populate the MDDataTable
+
+    def update_summary_table(self):
+        pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
+        if len(pd_cards) == 0:
+            self.summary_table.row_data = [("-", "-", "-", "-", "-", "-")]
+        else:
+            self.summary_table.row_data = [
+                (
+                    len(pd_cards),
+                    len(pd.unique(pd_cards["card_name"])),
+                    pd_cards["first_edition"].sum(),
+                    self.calculate_total_price(pd_cards["lowest_card_price"]),
+                    self.calculate_total_price(pd_cards["average_card_price"]),
+                    self.calculate_total_price(pd_cards["highest_card_price"]),
+                )
+            ]
+
     @staticmethod
     def string_prices_to_numbers(prices):
         """Takes a series of string numbers and returns a dataframe of those numbers
@@ -107,23 +130,10 @@ class DisplayPage(MDScreen):
         return list(data.itertuples(index=False, name=None))
 
     def on_pre_enter(self):
-        pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
-        cards = self.table_format(pd_cards)
-        self.data_table.row_data = cards  # Populate the MDDataTable
-        self.delete_icon_check(self.data_table)
-        if len(cards) == 0:
-            self.summary_table.row_data = [("-", "-", "-", "-", "-", "-")]
-        else:
-            self.summary_table.row_data = [
-                (
-                    len(pd_cards),
-                    len(pd.unique(pd_cards["card_name"])),
-                    pd_cards["first_edition"].sum(),
-                    self.calculate_total_price(pd_cards["lowest_card_price"]),
-                    self.calculate_total_price(pd_cards["average_card_price"]),
-                    self.calculate_total_price(pd_cards["highest_card_price"]),
-                )
-            ]
+        self.update_data_table()
+        self.uncheck_all_boxes()
+        self.page_banner.hide_delete()
+        self.update_summary_table()
 
     def sort_name(self, data):
         return zip(*sorted(enumerate(data), key=lambda l: l[1][1]))
@@ -176,13 +186,57 @@ class DisplayPage(MDScreen):
         print(instance_table, instance_row)
 
     def delete_select_rows(self):
-        self.data_table.get_row_checks()
+        data_to_delete = self.checked_rows
+        self.delete_data(data_to_delete)
+
+        # Re populate data table
+        self.update_data_table()
+        # Uncheck all boxes
+        self.uncheck_all_boxes()
+        # Hide delete icon
+        self.page_banner.hide_delete()
+        # Rec populate summary table
+        self.update_summary_table()
+
+    def uncheck_all_boxes(self):
+        self.checked_rows = []
+
+        # Without this this will trigger check_button_pressed code
+        self.deleting = True
+        self.data_table.table_data.select_all("normal")
+        self.deleting = False
 
     def check_button_pressed(self, instance_table, current_row):
-        self.delete_icon_check(instance_table)
+        if not self.deleting:
+            self.update_checks(instance_table)
+            self.delete_icon_check()
 
-    def delete_icon_check(self, table):
-        if table.get_row_checks() == []:
+    def delete_icon_check(self):
+        if self.checked_rows == []:
             self.page_banner.hide_delete()
         else:
             self.page_banner.show_delete()
+
+    @staticmethod
+    def delete_data(data_to_delete):
+        pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
+        rows_to_delete = pd.DataFrame(data_to_delete, columns=pd_cards.columns)["index"]
+
+        # Modify existing csv and upload new one without deleted rows
+        new_csv = pd_cards[~pd_cards["index"].isin(rows_to_delete)]
+        new_csv.drop("index", inplace=True, axis=1)
+        new_csv.to_csv("card_data.csv", index=False)
+
+    def update_checks(self, instance_table):
+        # WARNING: get_row_checks not reliable
+        #  see https://github.com/kivymd/KivyMD/issues/924
+        #  see https://github.com/kivymd/KivyMD/issues/1123
+        self.checked_rows = []
+        table_data = instance_table.table_data
+        for page, selected_cells in table_data.current_selection_check.items():
+            for column_index in selected_cells:
+                data_index = int(
+                    page * table_data.rows_num
+                    + column_index / table_data.total_col_headings
+                )
+                self.checked_rows.append(list(table_data.row_data[data_index]))
