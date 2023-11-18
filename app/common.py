@@ -7,13 +7,7 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.textfield.textfield import MDTextField
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.widget import MDWidget
-from style import (
-    border_colour,
-    disabled_border_colour,
-    disabled_fill_colour,
-    fill_colour,
-    selected_color,
-)
+from style import border_colour, fill_colour, selected_color
 
 
 class PageBanner(MDTopAppBar):
@@ -24,6 +18,7 @@ class PageBanner(MDTopAppBar):
         download_list=None,
         delete_items=None,
         undo_delete=None,
+        refresh_prices=None,
         *args,
         **kwargs
     ):
@@ -50,6 +45,12 @@ class PageBanner(MDTopAppBar):
                 lambda x: undo_delete(),
             ]
 
+        if refresh_prices:
+            self.stored_r_actions["refresh_button"] = [
+                "database-refresh",
+                lambda x: refresh_prices(),
+            ]
+
         if self.stored_r_actions != {}:
             self.current_r_actions = self.stored_r_actions.copy()
             self.right_action_items = self.trans(self.current_r_actions)
@@ -59,45 +60,43 @@ class PageBanner(MDTopAppBar):
         self.pos_hint = {"top": 1}
         self.height = 64
 
-    def hide_delete(self):
+    def hide_item(self, action_button):
         try:
-            self.current_r_actions.pop("delete_button")
+            self.current_r_actions.pop(action_button)
         except KeyError:
             return
 
         self.right_action_items = self.trans(self.current_r_actions)
+
+    def show_item(self, action_button):
+        if action_button in self.current_r_actions:
+            return
+
+        try:
+            delete_action = self.stored_r_actions[action_button]
+            self.current_r_actions[action_button] = delete_action
+        except KeyError:
+            return
+
+        self.right_action_items = self.trans(self.current_r_actions)
+
+    def hide_delete(self):
+        self.hide_item("delete_button")
 
     def show_delete(self):
-        if "delete_button" in self.current_r_actions:
-            return
-
-        try:
-            delete_action = self.stored_r_actions["delete_button"]
-            self.current_r_actions["delete_button"] = delete_action
-        except KeyError:
-            return
-
-        self.right_action_items = self.trans(self.current_r_actions)
+        self.show_item("delete_button")
 
     def hide_undo(self):
-        try:
-            self.current_r_actions.pop("undo_button")
-        except KeyError:
-            return
-
-        self.right_action_items = self.trans(self.current_r_actions)
+        self.hide_item("undo_button")
 
     def show_undo(self):
-        if "undo_button" in self.current_r_actions:
-            return
+        self.show_item("undo_button")
 
-        try:
-            delete_action = self.stored_r_actions["undo_button"]
-            self.current_r_actions["undo_button"] = delete_action
-        except KeyError:
-            return
+    def hide_refresh(self):
+        self.hide_item("refresh_button")
 
-        self.right_action_items = self.trans(self.current_r_actions)
+    def show_refresh(self):
+        self.show_item("refresh_button")
 
     @staticmethod
     def trans(input_dict):

@@ -1,4 +1,5 @@
 import pandas as pd
+from backend.add_info_db import CardRegisterAdder
 from backend.misc import open_with_default_app
 from common import PageBanner
 from kivy.metrics import dp
@@ -19,6 +20,7 @@ class DisplayPage(MDScreen):
             self.download_file,
             self.delete_select_rows,
             self.undo_delete_action,
+            self.refresh_prices,
         )
         self.summary_table = MDDataTable(
             background_color_selected_cell=table_colour,
@@ -224,7 +226,7 @@ class DisplayPage(MDScreen):
     def delete_data(data_to_delete):
         pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
         # So users can undo a delete
-        pd_cards.drop("index", axis=1).to_csv("card_data_pre_delete.csv", index=False)
+        pd_cards.drop("index", axis=1).to_csv("card_data_undo.csv", index=False)
         rows_to_delete = pd.DataFrame(data_to_delete, columns=pd_cards.columns)["index"]
 
         # Modify existing csv and upload new one without deleted rows
@@ -252,9 +254,43 @@ class DisplayPage(MDScreen):
         self.update_data_table()
 
     def undo_delete(self):
-        # Switch card_data_pre_delete with card_data
-        old_pd_cards = pd.read_csv("card_data_pre_delete.csv").fillna("")
+        # Switch card_data_undo with card_data
+        old_pd_cards = pd.read_csv("card_data_undo.csv").fillna("")
         current_pd_cards = pd.read_csv("card_data.csv").fillna("")
 
         old_pd_cards.to_csv("card_data.csv", index=False)
-        current_pd_cards.to_csv("card_data_pre_delete.csv", index=False)
+        current_pd_cards.to_csv("card_data_undo.csv", index=False)
+
+    def refresh_prices(self):
+        pd_cards = pd.read_csv("card_data.csv").fillna("")
+
+        def update_prices(row):
+            card_adder = CardRegisterAdder(
+                row["card_name"],
+                row["rarity"],
+                row["print_tag"],
+                row["first_edition"],
+                row["damaged"],
+                row["notes"],
+            )
+            card_adder.get_card_prices()
+            return pd.Series(
+                {
+                    "lowest_card_price": card_adder.lowest_card_price,
+                    "average_card_price": card_adder.average_card_price,
+                    "highest_card_price": card_adder.highest_card_price,
+                }
+            )
+
+        new_prices = pd_cards.apply(update_prices, axis=1)
+        pd_cards.to_csv("card_data_undo.csv", index=False)
+
+        pd_cards[
+            ["lowest_card_price", "average_card_price", "highest_card_price"]
+        ] = new_prices
+
+        pd_cards.to_csv("card_data.csv", index=False)
+        self.update_summary_table()
+        self.update_data_table()
+        self.page_banner.show_undo()
+        self.page_banner.hide_refresh()

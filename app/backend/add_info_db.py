@@ -131,6 +131,24 @@ class CardRegisterAdder:
 
         return matches
 
+    def card_match_none(self):
+        """Print tag search
+
+        Returns:
+            _type_: _description_
+        """
+        matches = list(
+            filter(
+                lambda card: card["price_data"]["status"] == "success",
+                self.card_info,
+            )
+        )
+
+        if matches != []:
+            self.match_type = "Nan"
+
+        return matches
+
     @staticmethod
     def card_price_range_calc(cards_data):
         """If multiple matches calculate range
@@ -172,11 +190,14 @@ class CardRegisterAdder:
             card_data = self.card_match_pt()
 
         if card_data == []:
+            card_data = self.card_match_none()
+
+        if card_data == []:
             # Card has never been sold
             logging.warning("No price info found")
-            self.highest_card_price = float("-")
-            self.average_card_price = float("-")
-            self.lowest_card_price = float("-")
+            self.highest_card_price = "-"
+            self.average_card_price = "-"
+            self.lowest_card_price = "-"
             self.match_type = "None"
             return
 
