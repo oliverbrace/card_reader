@@ -18,6 +18,7 @@ class DisplayPage(MDScreen):
             self.go_to_welcome_page,
             self.download_file,
             self.delete_select_rows,
+            self.undo_delete_action,
         )
         self.summary_table = MDDataTable(
             background_color_selected_cell=table_colour,
@@ -133,6 +134,7 @@ class DisplayPage(MDScreen):
         self.update_data_table()
         self.uncheck_all_boxes()
         self.page_banner.hide_delete()
+        self.page_banner.hide_undo()
         self.update_summary_table()
 
     def sort_name(self, data):
@@ -188,6 +190,7 @@ class DisplayPage(MDScreen):
     def delete_select_rows(self):
         data_to_delete = self.checked_rows
         self.delete_data(data_to_delete)
+        self.page_banner.show_undo()
 
         # Re populate data table
         self.update_data_table()
@@ -220,6 +223,8 @@ class DisplayPage(MDScreen):
     @staticmethod
     def delete_data(data_to_delete):
         pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
+        # So users can undo a delete
+        pd_cards.drop("index", axis=1).to_csv("card_data_pre_delete.csv", index=False)
         rows_to_delete = pd.DataFrame(data_to_delete, columns=pd_cards.columns)["index"]
 
         # Modify existing csv and upload new one without deleted rows
@@ -240,3 +245,16 @@ class DisplayPage(MDScreen):
                     + column_index / table_data.total_col_headings
                 )
                 self.checked_rows.append(list(table_data.row_data[data_index]))
+
+    def undo_delete_action(self):
+        self.undo_delete()
+        self.update_summary_table()
+        self.update_data_table()
+
+    def undo_delete(self):
+        # Switch card_data_pre_delete with card_data
+        old_pd_cards = pd.read_csv("card_data_pre_delete.csv").fillna("")
+        current_pd_cards = pd.read_csv("card_data.csv").fillna("")
+
+        old_pd_cards.to_csv("card_data.csv", index=False)
+        current_pd_cards.to_csv("card_data_pre_delete.csv", index=False)

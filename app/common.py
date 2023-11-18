@@ -23,6 +23,7 @@ class PageBanner(MDTopAppBar):
         previous_page=None,
         download_list=None,
         delete_items=None,
+        undo_delete=None,
         *args,
         **kwargs
     ):
@@ -30,19 +31,28 @@ class PageBanner(MDTopAppBar):
         if previous_page:
             self.left_action_items = [["arrow-left", lambda x: previous_page()]]
 
-        self.right_action_items_stored = []
+        self.stored_r_actions = {}
         if download_list:
-            self.right_action_items_stored.append(
-                ["file-download", lambda x: download_list()]
-            )
+            self.stored_r_actions["download_button"] = [
+                "file-download",
+                lambda x: download_list(),
+            ]
 
         if delete_items:
-            self.right_action_items_stored.append(
-                ["delete-forever", lambda x: delete_items()]
-            )
+            self.stored_r_actions["delete_button"] = [
+                "delete-forever",
+                lambda x: delete_items(),
+            ]
 
-        if self.right_action_items_stored != []:
-            self.right_action_items = self.right_action_items_stored
+        if undo_delete:
+            self.stored_r_actions["undo_button"] = [
+                "undo-variant",
+                lambda x: undo_delete(),
+            ]
+
+        if self.stored_r_actions != {}:
+            self.current_r_actions = self.stored_r_actions.copy()
+            self.right_action_items = self.trans(self.current_r_actions)
 
         self.title = title
         self.elevation = 4
@@ -50,10 +60,48 @@ class PageBanner(MDTopAppBar):
         self.height = 64
 
     def hide_delete(self):
-        self.right_action_items = [self.right_action_items_stored[0]]
+        try:
+            self.current_r_actions.pop("delete_button")
+        except KeyError:
+            return
+
+        self.right_action_items = self.trans(self.current_r_actions)
 
     def show_delete(self):
-        self.right_action_items = self.right_action_items_stored
+        if "delete_button" in self.current_r_actions:
+            return
+
+        try:
+            delete_action = self.stored_r_actions["delete_button"]
+            self.current_r_actions["delete_button"] = delete_action
+        except KeyError:
+            return
+
+        self.right_action_items = self.trans(self.current_r_actions)
+
+    def hide_undo(self):
+        try:
+            self.current_r_actions.pop("undo_button")
+        except KeyError:
+            return
+
+        self.right_action_items = self.trans(self.current_r_actions)
+
+    def show_undo(self):
+        if "undo_button" in self.current_r_actions:
+            return
+
+        try:
+            delete_action = self.stored_r_actions["undo_button"]
+            self.current_r_actions["undo_button"] = delete_action
+        except KeyError:
+            return
+
+        self.right_action_items = self.trans(self.current_r_actions)
+
+    @staticmethod
+    def trans(input_dict):
+        return list(input_dict.values())
 
 
 class CenteredLabel(MDLabel):
