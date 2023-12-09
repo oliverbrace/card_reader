@@ -1,10 +1,12 @@
 import pandas as pd
 from backend.add_info_db import CardRegisterAdder
 from backend.misc import open_with_default_app
-from common import PageBanner
+from common import LargeLabel, PageBanner
+from kivy.clock import Clock
 from kivy.metrics import dp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.datatables import MDDataTable
+from kivymd.uix.dialog import MDDialog
 from kivymd.uix.screen import MDScreen
 from style import table_colour
 
@@ -20,10 +22,9 @@ class DisplayPage(MDScreen):
             self.download_file,
             self.delete_select_rows,
             self.undo_delete_action,
-            self.refresh_prices,
+            self.start_price_refresh,
         )
         self.summary_table = MDDataTable(
-            background_color_selected_cell=table_colour,
             check=False,
             height=120,
             size_hint=(1, None),
@@ -61,7 +62,13 @@ class DisplayPage(MDScreen):
         page_content.add_widget(self.page_banner)
         page_content.add_widget(self.summary_table)
         page_content.add_widget(self.data_table)
+
         self.add_widget(page_content)
+        self.dialog = MDDialog(
+            size_hint=(0, 0),
+            auto_dismiss=False,
+        )
+        self.dialog.add_widget(LargeLabel(text="Loading..."))
 
     def go_to_welcome_page(self):
         self.manager.transition.direction = "right"
@@ -137,6 +144,7 @@ class DisplayPage(MDScreen):
         self.uncheck_all_boxes()
         self.page_banner.hide_delete()
         self.page_banner.hide_undo()
+        self.page_banner.show_refresh()
         self.update_summary_table()
 
     def sort_name(self, data):
@@ -261,10 +269,11 @@ class DisplayPage(MDScreen):
         old_pd_cards.to_csv("card_data.csv", index=False)
         current_pd_cards.to_csv("card_data_undo.csv", index=False)
 
-    def refresh_prices(self):
+    def refresh_prices(self, _):
         pd_cards = pd.read_csv("card_data.csv").fillna("")
 
         def update_prices(row):
+            self.page_banner.hide_refresh()
             card_adder = CardRegisterAdder(
                 row["card_name"],
                 row["rarity"],
@@ -293,4 +302,16 @@ class DisplayPage(MDScreen):
         self.update_summary_table()
         self.update_data_table()
         self.page_banner.show_undo()
-        self.page_banner.hide_refresh()
+        self.hide_loading()
+
+    def start_price_refresh(self):
+        self.show_loading()
+        # Passing refresh_prices in directly with show_loading causes show_loading
+        # to not run until refresh_prices is finished running
+        Clock.schedule_once(self.refresh_prices, 0.5)
+
+    def show_loading(self):
+        self.dialog.open()
+
+    def hide_loading(self):
+        self.dialog.dismiss()

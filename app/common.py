@@ -1,9 +1,11 @@
+from kivy.metrics import dp
 from kivymd.uix.anchorlayout import MDAnchorLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.card import MDCard
 from kivymd.uix.dropdownitem import MDDropDownItem
 from kivymd.uix.label import MDLabel
 from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.spinner import MDSpinner
 from kivymd.uix.textfield.textfield import MDTextField
 from kivymd.uix.toolbar import MDTopAppBar
 from kivymd.uix.widget import MDWidget
@@ -114,6 +116,13 @@ class SmallLabel(CenteredLabel):
         super().__init__(*args, **kwargs)
         self.size_hint_y = None
         self.height = 17
+
+
+class LargeLabel(CenteredLabel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.size_hint_y = None
+        self.font_style = "H4"
 
 
 class TopCenteredContainer(MDAnchorLayout):
@@ -376,3 +385,11 @@ class TwoButtons(CenteredButtonsContainer):
         self.children[0].children[1].md_bg_color = fill_colour
         self.children[0].children[0].md_bg_color = selected_color
         self.answer = False
+
+
+class LoadingIcon(MDSpinner):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.size_hint = (None, None)
+        self.size = (dp(30), dp(30))
+        self.pos_hint = ({"center_x": 0.5, "center_y": 0.5},)
