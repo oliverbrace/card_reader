@@ -82,6 +82,10 @@ class PageBanner(MDTopAppBar):
 
         self.right_action_items = self.trans(self.current_r_actions)
 
+    def add_back_button(self, back_function):
+        "for loading back button after init"
+        self.left_action_items = [["arrow-left", lambda x: back_function()]]
+
     def hide_delete(self):
         self.hide_item("delete_button")
 
@@ -238,6 +242,11 @@ class CenteredButtonsContainer(MDBoxLayout):
         self.pos_hint = {"center_x": 0.5}
 
 
+class FillSpace(MDBoxLayout):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class HelpBox(MDBoxLayout):
     """Is a box layout that is white"""
 
@@ -348,7 +357,7 @@ class TextWTextField(MDBoxLayout):
         self.pos_hint = {"center_x": 0.5}
 
         text_container = TopCenteredContainer(
-            SmallLabel(text="Notes"),
+            SmallLabel(text=text),
         )
 
         # Can't change size. Defaults to 100

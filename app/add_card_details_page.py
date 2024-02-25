@@ -24,14 +24,12 @@ class CardDetailsPage(MDScreen):
 
         layout = MDBoxLayout(orientation="vertical")
 
-        page_banner = PageBanner(
-            "Verify Card page", self.go_to_process_card_page, size_hint_y=None
-        )
+        self.page_banner = PageBanner("Verify Card page", size_hint_y=None)
 
         self.scroll_view = MDScrollView()
         content = MDBoxLayout(orientation="vertical", size_hint_y=None)
 
-        layout.add_widget(page_banner)
+        layout.add_widget(self.page_banner)
         layout.add_widget(self.scroll_view)
         self.scroll_view.add_widget(content)
 
@@ -57,6 +55,10 @@ class CardDetailsPage(MDScreen):
     def go_to_process_card_page(self):
         self.manager.transition.direction = "right"
         self.manager.current = "verify_card_page"
+
+    def go_to_manual_card_add_page(self):
+        self.manager.transition.direction = "right"
+        self.manager.current = "manual_card_add_page"
 
     def go_to_welcome_page(self):
         self.manager.transition.direction = "right"
@@ -116,6 +118,12 @@ class CardDetailsPage(MDScreen):
         else:
             # For testing if card was not provided
             self.card_adder = CardRegisterAdder("Fusion Weapon")
+
+        if self.manager.card_added_page == "manual":
+            back_function = self.go_to_manual_card_add_page
+        else:
+            back_function = self.go_to_process_card_page
+        self.page_banner.add_back_button(back_function)
 
         rarity_options = self.card_adder.possible_rarities + ["Other"]
         print_tag_options = ["Not provided"] + self.card_adder.possible_print_tags

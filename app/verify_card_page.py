@@ -45,6 +45,7 @@ class VerifyCardPage(MDScreen):
         self.manager.current = "camera_page"
 
     def card_correct(self, _):
+        self.manager.card_added_page = "camera"
         self.go_to_card_details()
 
     def card_incorrect(self, _):
