@@ -23,6 +23,7 @@ class DisplayPage(MDScreen):
             self.delete_select_rows,
             self.undo_delete_action,
             self.start_price_refresh,
+            self.edit_triggered,
         )
         self.summary_table = MDDataTable(
             check=False,
@@ -73,6 +74,33 @@ class DisplayPage(MDScreen):
     def go_to_welcome_page(self):
         self.manager.transition.direction = "right"
         self.manager.current = "welcome_page"
+
+    def go_to_edit_page(self):
+        self.set_up_manager_for_edit()
+        self.manager.card_added_page = "edit"
+        self.manager.transition.direction = "left"
+        self.manager.current = "card_details_page"
+
+    def set_up_manager_for_edit(self):
+        index = self.checked_rows[0][0]
+        name = self.checked_rows[0][1]
+        rarity = self.checked_rows[0][2]
+        print_tag = self.checked_rows[0][3]
+        first_edition = self.checked_rows[0][4]
+        damaged = self.checked_rows[0][5]
+        notes = self.checked_rows[0][9]
+        self.manager.current_card = {
+            "index": index,
+            "name": name,
+            "rarity": rarity,
+            "print_tag": print_tag,
+            "first_edition": first_edition,
+            "damaged": damaged,
+            "notes": notes,
+        }
+
+    def edit_triggered(self):
+        self.go_to_edit_page()
 
     def update_data_table(self):
         pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
@@ -145,6 +173,7 @@ class DisplayPage(MDScreen):
         self.page_banner.hide_delete()
         self.page_banner.hide_undo()
         self.page_banner.show_refresh()
+        self.page_banner.hide_edit()
         self.update_summary_table()
 
     def sort_name(self, data):
@@ -223,6 +252,7 @@ class DisplayPage(MDScreen):
         if not self.deleting:
             self.update_checks(instance_table)
             self.delete_icon_check()
+            self.edit_icon_check()
 
     def delete_icon_check(self):
         if self.checked_rows == []:
@@ -230,17 +260,25 @@ class DisplayPage(MDScreen):
         else:
             self.page_banner.show_delete()
 
-    @staticmethod
-    def delete_data(data_to_delete):
+    def edit_icon_check(self):
+        if len(self.checked_rows) == 1:
+            self.page_banner.show_edit()
+        else:
+            self.page_banner.hide_edit()
+
+    def delete_data(self, data_to_delete):
         pd_cards = pd.read_csv("card_data.csv").reset_index().fillna("")
         # So users can undo a delete
-        pd_cards.drop("index", axis=1).to_csv("card_data_undo.csv", index=False)
+        self.save_undo(pd_cards)
         rows_to_delete = pd.DataFrame(data_to_delete, columns=pd_cards.columns)["index"]
 
         # Modify existing csv and upload new one without deleted rows
         new_csv = pd_cards[~pd_cards["index"].isin(rows_to_delete)]
         new_csv.drop("index", inplace=True, axis=1)
         new_csv.to_csv("card_data.csv", index=False)
+
+    def save_undo(self, pd_cards):
+        pd_cards.drop("index", axis=1).to_csv("card_data_undo.csv", index=False)
 
     def update_checks(self, instance_table):
         # WARNING: get_row_checks not reliable
@@ -294,9 +332,9 @@ class DisplayPage(MDScreen):
         new_prices = pd_cards.apply(update_prices, axis=1)
         pd_cards.to_csv("card_data_undo.csv", index=False)
 
-        pd_cards[
-            ["lowest_card_price", "average_card_price", "highest_card_price"]
-        ] = new_prices
+        pd_cards[["lowest_card_price", "average_card_price", "highest_card_price"]] = (
+            new_prices
+        )
 
         pd_cards.to_csv("card_data.csv", index=False)
         self.update_summary_table()

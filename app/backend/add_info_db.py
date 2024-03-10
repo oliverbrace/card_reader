@@ -233,6 +233,28 @@ class CardRegisterAdder:
                 ]
             )
 
+    def edit_card(self, index):
+        data = [
+            self.card_name,
+            self.rarity,
+            self.print_tag,
+            self.first_edition,
+            self.damaged,
+            self.lowest_card_price,
+            self.average_card_price,
+            self.highest_card_price,
+            self.notes,
+        ]
+        lines = []
+        with open("card_data.csv", "r", newline="", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            lines = list(reader)
+
+        lines[index + 1] = data
+        with open("card_data.csv", "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerows(lines)
+
     def __call__(self):
         self.filter_card_info()
 

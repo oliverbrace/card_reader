@@ -21,6 +21,7 @@ class PageBanner(MDTopAppBar):
         delete_items=None,
         undo_delete=None,
         refresh_prices=None,
+        edit_card_details=None,
         *args,
         **kwargs
     ):
@@ -51,6 +52,12 @@ class PageBanner(MDTopAppBar):
             self.stored_r_actions["refresh_button"] = [
                 "database-refresh",
                 lambda x: refresh_prices(),
+            ]
+
+        if edit_card_details:
+            self.stored_r_actions["edit_button"] = [
+                "pencil-box-outline",
+                lambda x: edit_card_details(),
             ]
 
         if self.stored_r_actions != {}:
@@ -103,6 +110,12 @@ class PageBanner(MDTopAppBar):
 
     def show_refresh(self):
         self.show_item("refresh_button")
+
+    def hide_edit(self):
+        self.hide_item("edit_button")
+
+    def show_edit(self):
+        self.show_item("edit_button")
 
     @staticmethod
     def trans(input_dict):
@@ -281,25 +294,37 @@ class TextWButtons(MDBoxLayout):
         self.add_widget(button_container)
 
     def clicked_yes(self, _):
+        self.set_yes()
+        self.on_release()
+
+    def set_yes(self):
         self.children[0].children[1].md_bg_color = selected_color
         self.children[0].children[0].md_bg_color = fill_colour
         self.answer = True
-        self.on_release()
 
     def clicked_no(self, _):
+        self.set_no()
+        self.on_release()
+
+    def set_no(self):
         self.children[0].children[1].md_bg_color = fill_colour
         self.children[0].children[0].md_bg_color = selected_color
         self.answer = False
-        self.on_release()
 
     def reset_buttons(self):
         self.children[0].children[1].md_bg_color = fill_colour
         self.children[0].children[0].md_bg_color = fill_colour
         self.answer = None
 
+    def set_answer(self, answer):
+        if answer:
+            self.set_yes()
+        else:
+            self.set_no()
+
 
 class TextWDropdown(MDBoxLayout):
-    def __init__(self, text, default, on_release, options=[], *args, **kwargs):
+    def __init__(self, text, on_release, options=[], *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.orientation = "vertical"
         self.size_hint_y = None

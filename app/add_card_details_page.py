@@ -60,12 +60,19 @@ class CardDetailsPage(MDScreen):
         self.manager.transition.direction = "right"
         self.manager.current = "manual_card_add_page"
 
+    def go_to_display_page(self):
+        self.manager.transition.direction = "right"
+        self.manager.current = "display_page"
+
     def go_to_welcome_page(self):
         self.manager.transition.direction = "right"
         self.manager.current = "welcome_page"
 
     def finish_card_add(self):
-        self.go_to_welcome_page()
+        if self.manager.card_added_page == "edit":
+            self.go_to_display_page()
+        else:
+            self.go_to_welcome_page()
 
     def set_card_adder_values(self):
         self.card_adder.first_edition = self.first_edition_container.answer
@@ -75,13 +82,11 @@ class CardDetailsPage(MDScreen):
     def create_widgets(self):
         self.rarity_container = TextWDropdown(
             "What is the rarity?",
-            default="Common",
             on_release=self.rarity_select,
         )
 
         self.print_tag_container = TextWDropdown(
             "What is the print tag?",
-            default="Not provided",
             on_release=self.printer_tag_select,
         )
 
@@ -121,6 +126,8 @@ class CardDetailsPage(MDScreen):
 
         if self.manager.card_added_page == "manual":
             back_function = self.go_to_manual_card_add_page
+        elif self.manager.card_added_page == "edit":
+            back_function = self.go_to_display_page
         else:
             back_function = self.go_to_process_card_page
         self.page_banner.add_back_button(back_function)
@@ -133,15 +140,39 @@ class CardDetailsPage(MDScreen):
         self.rarity_container.dropdown = None
         self.print_tag_container.dropdown = None
 
-        self.damage_selected = False
-        self.first_edition_selected = False
-        self.rarity_container.set_item("Common")
-        self.print_tag_container.set_item("Not provided")
-        self.price_table.row_data = [("-", "-", "-", "-")]
-        self.first_edition_container.reset_buttons()
-        self.damaged_container.reset_buttons()
-        self.notes_container.clear_text()
+        if self.manager.card_added_page == "edit":
+            self.edit_card_set_up()
+        else:
+            self.damage_selected = False
+            self.first_edition_selected = False
+            self.rarity_container.set_item("Common")
+            self.print_tag_container.set_item("Not provided")
+            self.price_table.row_data = [("-", "-", "-", "-")]
+            self.first_edition_container.reset_buttons()
+            self.damaged_container.reset_buttons()
+            self.notes_container.clear_text()
         self.scroll_view.scroll_to(self.rarity_container, animate=False)
+
+    def edit_card_set_up(self):
+        self.damage_selected = True
+        self.first_edition_selected = True
+        rarity = self.manager.current_card["rarity"]
+        print_tag = self.manager.current_card["print_tag"]
+        first_edition = self.manager.current_card["first_edition"]
+        damaged = self.manager.current_card["damaged"]
+        notes = self.manager.current_card["notes"]
+        self.card_adder.rarity = rarity
+        self.card_adder.print_tag = print_tag
+        self.card_adder.rarity = rarity
+        self.card_adder.first_edition = first_edition
+        self.card_adder.damaged = damaged
+        self.card_adder.notes = notes
+        self.rarity_container.set_item(rarity)
+        self.print_tag_container.set_item(print_tag)
+        self.first_edition_container.set_answer(first_edition)
+        self.damaged_container.set_answer(damaged)
+        self.notes_container.notes_text_container.text = notes
+        self.update_price_display()
 
     def update_price_display(self):
         if self.print_tag_container.children[0].current_item == "Not provided":
@@ -195,5 +226,9 @@ class CardDetailsPage(MDScreen):
 
     def confirm_card(self, _):
         self.set_card_adder_values()
-        self.card_adder.write_card_to_csv()
+        if self.manager.card_added_page == "edit":
+            index = self.manager.current_card["index"]
+            self.card_adder.edit_card(index)
+        else:
+            self.card_adder.write_card_to_csv()
         self.finish_card_add()

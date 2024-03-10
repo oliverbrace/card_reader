@@ -27,7 +27,7 @@ class App(MDApp):
         sm.add_widget(verify_card_page)
         sm.add_widget(card_details_page)
         sm.add_widget(manual_card_add_page)
-        sm.current = "manual_card_add_page"
+        sm.current = "display_page"
 
         return sm
 
